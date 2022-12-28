@@ -82,7 +82,7 @@ git = os.getenv("GIT")
 
 
 def create_app(satellite_app):
-    app = Flask(__name__)
+    git_app = Flask(__name__)
 
     github = Github(git)
     github.setup()
@@ -90,24 +90,24 @@ def create_app(satellite_app):
     satellite_app.start()
 
     # Index
-    @app.get('/pull')
+    @git_app.get('/pull')
     def webhook():
         github.pull()
         return 'pulled', 200
 
-    @app.get('/start')
+    @git_app.get('/start')
     def start_app():
         if satellite_app.start():
             return 'started', 200
         return 'already started', 200
 
-    @app.get('/stop')
+    @git_app.get('/stop')
     def stop_app():
         if satellite_app.stop():
             return 'stopped', 200
         return 'already stopped', 200
 
-    return app
+    return git_app
 
 
 if __name__ == "__main__":
