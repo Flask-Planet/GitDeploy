@@ -1,6 +1,8 @@
 import os
 import pathlib
+import signal
 import subprocess as sp
+from typing import Optional
 
 from git import Repo
 
@@ -9,23 +11,38 @@ from flask import Flask
 
 
 class SatelliteAppController:
-    process: sp.Popen = None
+    process: Optional[sp.Popen]
+
+    def __init__(self):
+        self.process = None
 
     def start(self):
+        if hasattr(self.process, 'pid'):
+            return False
+
         self.process = sp.Popen(
             ['venv/bin/gunicorn', '-b', '0.0.0.0:5000', 'run:sgi'],
             cwd=pathlib.Path(pathlib.Path.cwd() / "repo"),
             stdout=sp.PIPE,
             stderr=sp.PIPE,
+            start_new_session=True,
         )
+        return True
 
     def stop(self):
-        if hasattr(self.process, 'send_signal'):
-            sp.Popen.terminate(self.process)
+        try:
+            os.killpg(os.getpgid(self.process.pid), signal.SIGTERM)
+            while True:
+                if self.process.poll() is not None:
+                    break
+            self.process = None
+            return True
+        except ProcessLookupError:
+            return False
 
 
 class AppController:
-    satellite_app: SatelliteAppController()
+    satellite_app: SatelliteAppController
 
     def __init__(self, create_flask_app):
         self.create_flask_app = create_flask_app
@@ -80,13 +97,15 @@ def create_app(satellite_app):
 
     @app.get('/start')
     def start_app():
-        satellite_app.start()
-        return 'started', 200
+        if satellite_app.start():
+            return 'started', 200
+        return 'already started', 200
 
     @app.get('/stop')
     def stop_app():
-        satellite_app.stop()
-        return 'stopped', 200
+        if satellite_app.stop():
+            return 'stopped', 200
+        return 'already stopped', 200
 
     return app
 
