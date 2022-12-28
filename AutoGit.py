@@ -2,7 +2,7 @@ import os
 import pathlib
 import subprocess as sp
 
-from AutoGit import Repo
+from git import Repo
 
 from dotenv import load_dotenv
 from flask import Flask
