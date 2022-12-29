@@ -1,0 +1,16 @@
+{% extends 'main.html' %}
+
+{% block container %}
+    <h4 class="u-center">Login</h4>
+    <form name="login" method="post">
+        <fieldset style="margin-bottom: 0">
+            <label for="t1">Token 1</label>
+            <input name="t1" id="t1" value="oEFTqbqAXCsFNRXHELt9Qz52" type="password">
+            <label for="t2">Token 2</label>
+            <input name="t2" id="t2" value="djhKD4KpjaCRoDc1yp4NUd5u" type="password">
+            <label for="t3">Token 3</label>
+            <input name="t3" id="t3" value="sIB179qXD6K6iLddapI5wDiV" type="password">
+            <input type="submit" value="login" class="u-w100" style="margin-bottom: 0; margin-top: 10px;">
+        </fieldset>
+    </form>
+{% endblock container %}

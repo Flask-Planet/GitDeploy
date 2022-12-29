@@ -1,4 +1,4 @@
 GitPython
 Flask
 python-dotenv
-gunicorn
+Flask-BigApp

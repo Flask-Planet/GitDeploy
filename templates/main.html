@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='milligram.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css.css') }}">
+
+    <meta charset="UTF-8">
+    <title>AutoGit - Flask-Planet</title>
+</head>
+<body>
+<div class="container header">
+    <img src="{{ url_for('static', filename='flask_planet_tpbk.png') }}" alt="logo" class="logo">
+    <p style="margin: 0; font-weight: bold">Flask-Planet</p>
+    <p style="margin: 0">AutoGit</p>
+</div>
+<div class="container-sm">
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block container %}
+
+    {% endblock container %}
+</div>
+</body>
+</html>

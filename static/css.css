@@ -1,0 +1,83 @@
+body {
+    background-color: #181818;
+}
+
+.container-sm {
+    border-radius: 10px;
+    background-color: whitesmoke;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    width: 400px;
+    padding: 10px;
+    word-wrap: break-word;
+}
+
+.alert {
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgba(211, 52, 255, 0.1);
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.app-status {
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 10px;
+}
+
+.red {
+    font-weight: bold;
+    color: red;
+}
+
+.green {
+    font-weight: bold;
+    color: green;
+}
+
+.logo {
+    width: 80px;
+}
+
+.header {
+    text-align: center;
+    margin-top: 20px;
+    color: whitesmoke;
+}
+
+.u-bold {
+    font-weight: bold;
+}
+
+.u-center {
+    text-align: center;
+}
+
+.u-w100 {
+    width: 100%;
+}
+
+.u-underline {
+    text-decoration: underline;
+}
+
+
+.button-black {
+    background-color: black;
+    border-color: black;
+}
+
+.button-black.button-clear,
+.button-black.button-outline {
+    background-color: transparent;
+    color: black;
+}
+
+.button-black.button-clear {
+    border-color: transparent;
+}

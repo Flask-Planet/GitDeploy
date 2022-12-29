@@ -1,0 +1,12 @@
+{% extends 'main.html' %}
+
+{% block container %}
+    <p class="u-bold">Copy the following tokens, keep them safe, these are what you will use to log in.</p>
+    <p>Token 1</p>
+    <pre><code>{{ t1 }}</code></pre>
+    <p>Token 2</p>
+    <pre><code>{{ t2 }}</code></pre>
+    <p>Token 3</p>
+    <pre><code>{{ t3 }}</code></pre>
+    <a href="{{ url_for('index') }}" class="button u-w100">I have stored the tokens</a>
+{% endblock container %}

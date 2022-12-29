@@ -1,0 +1,20 @@
+{% extends 'main.html' %}
+
+{% block container %}
+    <div class="row">
+        <div class="column">
+            <form name="setup" method="post" style="margin-bottom: 0">
+                <fieldset style="margin-bottom: 0">
+                    <label for="git">Git</label>
+                    <input name="git" id="git" value="{{ settings.GIT }}" type="text">
+                    <label for="command">Command</label>
+                    <input name="command" id="command" value="{{ settings.COMMAND }}" type="text">
+                    <label for="wh_secret">Webhook Secret</label>
+                    <input name="wh_secret" id="wh_secret" value="{{ settings.WH_SECRET }}" type="text">
+                    <input type="submit" value="save" class="u-w100" style="margin-bottom: 5px; margin-top: 10px;">
+                    <a href="{{ url_for('dashboard') }}" class="button button-black u-w100" style="margin-bottom: 0;">Cancel</a>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+{% endblock container %}

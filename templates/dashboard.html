@@ -1,0 +1,61 @@
+{% extends 'main.html' %}
+
+{% block container %}
+    <div class="row">
+        <div class="column">
+            <strong>Git App Status</strong>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            {% if status %}
+                <span class="green">&circledcirc;</span> Running
+            {% else %}
+                <span class="red">&circledcirc;</span> Stopped
+            {% endif %}
+            (
+            {% if status %}
+                <a href="{{ url_for('stop_app') }}">Stop</a>
+            {% else %}
+                <a href="{{ url_for('start_app') }}">Start</a>
+            {% endif %}
+            )
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="column">
+            <strong>Git App Settings</strong> ( <a href="{{ url_for('settings_app') }}">Edit Settings</a> )
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            <span class="u-underline">Git:</span> {{ settings.GIT }} ( <a href="{{ url_for('manual_pull') }}">Pull / Clone</a> )
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            <span class="u-underline">Command:</span> {{ settings.COMMAND }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            <span class="u-underline">Webhook Secret:</span> http_your_domain_or_ip/webhook/{{ settings.WH_SECRET }}
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="column">
+            <strong>Repo Folder Contents</strong>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            {% if repo_folder %}
+                {% for ld in repo_folder %}
+                    {{ ld }}<br/>
+                {% endfor %}
+            {% else %}
+                No files in repo folder
+            {% endif %}
+        </div>
+    </div>
+{% endblock container %}
