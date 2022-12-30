@@ -105,8 +105,7 @@ class AutoGitExtension:
 
         Creates the following files used by the extension:
         - cwd/config/.autogit.json
-        - cwd/config/autogit.supervisor.ini
-        - cwd/config/satellite.supervisor.ini
+        - cwd/config/satellite.ini
 
         :return:
         """
@@ -129,6 +128,22 @@ class AutoGitExtension:
             self._write_satellite_ini("python3 --version")
 
         self.supervisorctl_reread()
+        self.supervisorctl_update()
+
+    def auto_deploy(self):
+        if self.settings_file.exists():
+            settings = self.read_settings()
+            git = settings.get("GIT")
+            command = settings.get("COMMAND")
+            if git is not None and command is not None:
+                self.repo_clone(git)
+                self.repo_create_venv()
+                self.repo_install_requirements()
+                self._write_satellite_ini(command)
+                if self.allow_supervisor:
+                    self.supervisorctl_reread()
+                    self.supervisorctl_update()
+                    self.restart_satellite()
 
     def _write_satellite_ini(self, command: str):
         Tools.write_supervisor_config(
