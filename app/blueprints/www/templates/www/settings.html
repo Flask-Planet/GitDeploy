@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'theme/main.html' %}
 
 {% block container %}
     <div class="row">
@@ -10,9 +10,13 @@
                     <label for="command">Command</label>
                     <input name="command" id="command" value="{{ settings.COMMAND }}" type="text">
                     <label for="wh_secret">Webhook Secret</label>
-                    <input name="wh_secret" id="wh_secret" value="{{ settings.WH_SECRET }}" type="text">
+                    <textarea style="height: 100px;" name="wh_secret" id="wh_secret">{{ settings.WH_SECRET }}</textarea>
+
+{#                    <input name="auto_deploy" id="auto_deploy" type="checkbox">#}
+{#                    <label class="label-inline" for="auto_deploy">Auto deploy the changes</label>#}
+
                     <input type="submit" value="save" class="u-w100" style="margin-bottom: 5px; margin-top: 10px;">
-                    <a href="{{ url_for('dashboard') }}" class="button button-black u-w100" style="margin-bottom: 0;">Cancel</a>
+                    <a href="{{ url_for('www.dashboard') }}" class="button button-black u-w100" style="margin-bottom: 0;">Cancel</a>
                 </fieldset>
             </form>
         </div>

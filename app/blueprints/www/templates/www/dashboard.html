@@ -1,0 +1,78 @@
+{% extends 'theme/main.html' %}
+
+{% block container %}
+    <div class="row">
+        <div class="column">
+            <h4 class="dashboard-header">Git App Status</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            {% if status %}
+                <span class="green">&circledcirc;</span> Running
+            {% else %}
+                <span class="red">&circledcirc;</span> Stopped
+            {% endif %}
+            (
+            {% if status %}
+                <a href="{{ url_for('api.stop_app') }}">Stop</a>
+            {% else %}
+                <a href="{{ url_for('api.start_app') }}">Start</a>
+            {% endif %}
+            / <a href="{{ url_for('api.restart_app') }}">Restart</a>
+            )
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="column">
+            <h4 class="dashboard-header">Git App Settings
+                <span class="header-link">( <a href="{{ url_for('www.settings_app') }}">Edit Settings</a> )</span>
+            </h4>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            <label for="display_git">Git <span class="header-link">(
+                <a href="{{ url_for('api.manual_pull') }}">Pull</a> /
+                <a href="{{ url_for('api.manual_clone') }}">Clone</a> /
+                <a href="{{ url_for('api.manual_destroy') }}">Destroy</a>
+                )</span>
+            </label>
+            <input id="display_git" type="text" readonly value="{{ settings.GIT }}">
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            <label for="display_command">Command</label>
+            <input id="display_command" type="text" readonly value="{{ settings.COMMAND }}">
+            <span class="header-link" style="margin-bottom: 5px;">( Command will be ran from venv/bin/ )</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            <label for="display_webhook">Webhook Secret
+                <span class="header-link">( <a href="{{ url_for('api.generate_new_secret') }}">Generate New Secret</a> )</span>
+            </label>
+            <textarea id="display_webhook" style="height: 100px; margin-bottom: 0;">{{ settings.WH_SECRET }}</textarea>
+            <span class="header-link" style="margin-bottom: 5px;">( http://[ip address]:5500/api/webhook/[Webhook Secret] )</span>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="column">
+            <strong>Repo Folder Files</strong>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            {% if repo_folder %}
+                {% for ld in repo_folder %}
+                    {{ ld }}<br/>
+                {% endfor %}
+            {% else %}
+                No files in repo folder
+            {% endif %}
+        </div>
+    </div>
+{% endblock container %}

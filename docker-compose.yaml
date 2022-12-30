@@ -1,0 +1,12 @@
+services:
+  web:
+    container_name: website_here
+    image: cheesecake87/autogit-flask
+    ports:
+      - "5000"
+      - "5500"
+    volumes:
+      - autogit_config:/autogit/config
+
+volumes:
+  autogit_config:

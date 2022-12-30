@@ -1,0 +1,5 @@
+enabled = "yes"
+url_prefix = "/"
+
+[session]
+logged_in = false
