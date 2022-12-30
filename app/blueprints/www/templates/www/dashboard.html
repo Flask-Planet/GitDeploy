@@ -56,7 +56,7 @@
                 <span class="header-link">( <a href="{{ url_for('api.generate_new_secret') }}">Generate New Secret</a> )</span>
             </label>
             <textarea id="display_webhook" style="height: 100px; margin-bottom: 0;">{{ settings.WH_SECRET }}</textarea>
-            <span class="header-link" style="margin-bottom: 5px;">( https://git.yourdomain.com/api/webhook/[Webhook Secret] )</span>
+            <span class="header-link" style="margin-bottom: 5px;">( http://[ip address]:5500/api/webhook/[Webhook Secret] )</span>
         </div>
     </div>
     <div class="row" style="margin-top: 10px;">
