@@ -8,9 +8,20 @@ body {
     margin-left: auto;
     margin-right: auto;
     margin-top: 20px;
-    width: 400px;
+    width: 600px;
     padding: 10px;
     word-wrap: break-word;
+}
+
+.dashboard-header {
+    font-weight: bold;
+    margin-bottom: 5px;
+
+}
+
+.header-link {
+    font-size: 1.6rem;
+    font-weight: normal;
 }
 
 .alert {
