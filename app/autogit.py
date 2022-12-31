@@ -15,6 +15,8 @@ class Tools:
 
     @staticmethod
     def system_log(location: Path, text: str):
+        if text == "" or text is None:
+            return
         with open(location, "a") as f:
             f.write(f"{text} | \n".strip())
 
@@ -107,7 +109,7 @@ class AutoGitExtension:
 
         self.allow_supervisor = allow_supervisor
 
-    def _run_command(self, command: str, rd: Path = None) -> str:
+    def _run_command(self, command: str, rd: Path = None, supress_logs: bool = False) -> str:
         if rd is None:
             rd = self.working_dir
 
@@ -134,7 +136,8 @@ class AutoGitExtension:
         if process_err:
             err = f" :ERR: {process_err} \n"
 
-        Tools.system_log(self.autogit_log, f"{out} {err}")
+        if not supress_logs:
+            Tools.system_log(self.autogit_log, f"{out} {err}")
         return out + err
 
     def _write_satellite_ini(self, command: str):
@@ -190,9 +193,6 @@ class AutoGitExtension:
 
         if not self.satellite_ini.exists():
             self._write_satellite_ini("python3 --version")
-
-        self.supervisorctl_reread()
-        self.supervisorctl_update()
 
     def auto_deploy(self):
         if self.settings_file.exists():
@@ -367,13 +367,14 @@ class AutoGitExtension:
                 return error
         return "ERROR ::: Supervisor disabled"
 
-    def supervisorctl_status(self, app) -> str:
+    def supervisorctl_status(self, app, supress_logs: bool = False) -> str:
         if self.allow_supervisor:
             try:
-                return self._run_command(f"supervisorctl status {app}")
+                return self._run_command(f"supervisorctl status {app}", supress_logs=True)
             except Exception as e:
                 error = f"ERROR ::: supervisorctl status {app}: {e}"
-                Tools.system_log(self.autogit_log, error)
+                if not supress_logs:
+                    Tools.system_log(self.autogit_log, error)
                 return error
 
     def supervisorctl_reread(self):
@@ -392,7 +393,7 @@ class AutoGitExtension:
 
     def status_satellite(self) -> bool:
         if self.allow_supervisor:
-            _ = self.supervisorctl_status("satellite")
+            _ = self.supervisorctl_status("satellite", supress_logs=True)
 
             if isinstance(_, str):
                 if "STOPPED" in _:

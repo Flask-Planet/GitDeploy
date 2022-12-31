@@ -14,6 +14,8 @@ ag.auto_deploy()
 
 os.environ["AUTOGIT_SK"] = Tools.generate_random_token(256)
 
+ag.del_autogit_log()
+
 
 def create_app():
     app = Flask(__name__)
