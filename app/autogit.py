@@ -2,7 +2,7 @@ import json
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 from git import Repo
 
@@ -15,13 +15,28 @@ class Tools:
 
     @staticmethod
     def system_log(location: Path, text: str):
+        if text == "" or text is None:
+            return
         with open(location, "a") as f:
-            f.write(f"{text}\n")
+            f.write(f"{text} | \n".strip())
 
     @staticmethod
     def write_supervisor_config(config_file: Path, config: str):
         with open(config_file, "w") as f:
             f.write(config)
+
+    @staticmethod
+    def check_for_none(value: str) -> Union[str, None]:
+        str_values = ["null", "none", "undefined"]
+
+        if isinstance(value, str):
+            if value.lower() in str_values:
+                return None
+
+        if value is None:
+            return None
+
+        return value
 
 
 @dataclass
@@ -31,14 +46,14 @@ class DefaultResources:
         "COMMAND": None,
         "WH_SECRET": Tools.generate_random_token(64),
         "FIRST_RUN": True,
-        "T1": Tools.generate_random_token(14),
-        "T2": Tools.generate_random_token(14),
+        "T1": Tools.generate_random_token(24),
+        "T2": Tools.generate_random_token(24),
     }
 
     supervisor_config = """
 [program:{app}]
 directory={dir}
-command={command}
+command=venv/bin/{command}
 user=root
 autostart={autostart}
 autorestart={autorestart}
@@ -94,6 +109,50 @@ class AutoGitExtension:
 
         self.allow_supervisor = allow_supervisor
 
+    def _run_command(self, command: str, rd: Path = None, supress_logs: bool = False) -> str:
+        if rd is None:
+            rd = self.working_dir
+
+        command = command.split(" ")
+        out, err = "", ""
+        process_out, process_err = None, None
+        stdout, stderr = None, None
+
+        try:
+            process = subprocess.run(command, capture_output=True, cwd=rd, timeout=120)
+            stdout = process.stdout.decode(encoding='UTF-8')
+            stderr = process.stderr.decode(encoding='UTF-8')
+        except Exception as e:
+            process_err = e
+
+        if stdout:
+            process_out = stdout
+
+        if stderr:
+            process_err = stderr
+
+        if process_out:
+            out = f" :OUT: {process_out} \n"
+        if process_err:
+            err = f" :ERR: {process_err} \n"
+
+        if not supress_logs:
+            Tools.system_log(self.autogit_log, f"{out} {err}")
+        return out + err
+
+    def _write_satellite_ini(self, command: str):
+        Tools.write_supervisor_config(
+            self.satellite_ini,
+            DefaultResources.supervisor_config.format(
+                app="satellite",
+                dir=self.repo_dir,
+                command=command,
+                autostart="true",
+                autorestart="false",
+                log_dir=self.log_dir,
+            )
+        )
+
     def setup(self):
         """
 
@@ -118,6 +177,14 @@ class AutoGitExtension:
         for directory in directories:
             directory.mkdir(exist_ok=True)
 
+        files = [
+            self.autogit_log,
+            self.satellite_log,
+        ]
+        # Create directories
+        for file in files:
+            file.touch(exist_ok=True)
+
         if not self.settings_file.exists():
             self.write_settings(
                 DefaultResources.autogit_settings,
@@ -126,9 +193,6 @@ class AutoGitExtension:
 
         if not self.satellite_ini.exists():
             self._write_satellite_ini("python3 --version")
-
-        self.supervisorctl_reread()
-        self.supervisorctl_update()
 
     def auto_deploy(self):
         if self.settings_file.exists():
@@ -145,47 +209,72 @@ class AutoGitExtension:
                     self.supervisorctl_update()
                     self.restart_satellite()
 
-    def _write_satellite_ini(self, command: str):
-        Tools.write_supervisor_config(
-            self.satellite_ini,
-            DefaultResources.supervisor_config.format(
-                app="satellite",
-                dir=self.repo_dir,
-                command=command,
-                autostart="false",
-                autorestart="false",
-                log_dir=self.log_dir,
-            )
-        )
-
     def read_settings(self) -> dict:
         with open(self.settings_file, "r") as f:
             return json.load(f)
 
     def write_settings(self, new_settings: dict, auto_actions: bool = True) -> None:
+        clean_settings = dict()
+
+        for key, value in new_settings.items():
+            clean_settings[key] = Tools.check_for_none(value)
+
         if self.settings_file.exists():
             old_settings = self.read_settings()
             if auto_actions:
-                if new_settings.get("GIT") != old_settings.get("GIT"):
+                if clean_settings.get("GIT") != old_settings.get("GIT"):
                     self.repo_destroy()
-                    self.repo_clone(new_settings.get("GIT"))
+                    self.repo_clone(clean_settings.get("GIT"))
                     self.repo_create_venv()
                     self.repo_install_requirements()
 
-            if new_settings.get("COMMAND") != old_settings.get("COMMAND"):
-                self._write_satellite_ini(new_settings.get("COMMAND"))
+            if clean_settings.get("COMMAND") != old_settings.get("COMMAND"):
+                self._write_satellite_ini(clean_settings.get("COMMAND"))
                 if auto_actions:
                     self.supervisorctl_reread()
                     self.supervisorctl_update()
                     self.restart_satellite()
 
         with open(self.settings_file, "w") as f:
-            json.dump(new_settings, f, indent=4)
+            json.dump(clean_settings, f, indent=4)
+
+    def set_tokens(self, current_settings) -> dict:
+        if self.settings_file.exists():
+            settings = current_settings
+            settings["T1"] = Tools.generate_random_token(24)
+            settings["T2"] = Tools.generate_random_token(24)
+            self.write_settings(settings)
+            return settings
+
+    def read_autogit_log(self) -> list:
+        if self.autogit_log.exists():
+            with open(self.autogit_log, "r") as f:
+                logs = f.readlines()
+            if logs:
+                return logs
+        return ["No logs found"]
+
+    def del_autogit_log(self):
+        self.autogit_log.unlink(missing_ok=True)
+        self.autogit_log.touch(exist_ok=True)
+
+    def read_satellite_log(self) -> list:
+        if self.satellite_log.exists():
+            with open(self.satellite_log, "r") as f:
+                logs = f.readlines()
+            if logs:
+                return logs
+        return ["No logs found"]
+
+    def del_satellite_log(self):
+        self.satellite_log.unlink(missing_ok=True)
+        self.satellite_log.touch(exist_ok=True)
 
     def repo_clone(self, repo_url: str) -> bool:
         if not Path(self.repo_dir / ".git").exists():
             try:
                 self.repo = Repo.clone_from(repo_url, self.repo_dir)
+                Tools.system_log(self.autogit_log, f"REPO ::: Repo cloned from {repo_url}")
                 return True
             except Exception as e:
                 Tools.system_log(self.autogit_log, f"ERROR ::: Cloning repo: {e}")
@@ -207,11 +296,11 @@ class AutoGitExtension:
 
     def repo_create_venv(self):
         if self.repo_dir.exists():
+            if Path(self.repo_dir / "venv").exists():
+                self._run_command(f"rm -rf venv", rd=self.repo_dir)
             try:
-                subprocess.run(
-                    ["python3", "-m", "venv", "venv"],
-                    cwd=self.repo_dir
-                )
+                self._run_command("python3 -m venv venv", rd=self.repo_dir)
+                Tools.system_log(self.autogit_log, f"REPO ::: Repo venv created")
             except Exception as e:
                 raise RuntimeError(f"ERROR ::: creating venv: {e}")
         else:
@@ -220,9 +309,7 @@ class AutoGitExtension:
     def repo_install_requirements(self):
         if self.repo_python_instance.exists() and self.repo_requirements.exists():
             try:
-                subprocess.run(
-                    [f'{self.repo_python_instance}', '-m', 'pip', 'install', '-r', f'{self.repo_requirements}']
-                )
+                self._run_command(f"{self.repo_python_instance} -m pip install -r {self.repo_requirements}", rd=self.repo_dir)
             except Exception as e:
                 raise RuntimeError(f"ERROR ::: installing requirements: {e}")
 
@@ -231,10 +318,7 @@ class AutoGitExtension:
 
     def repo_destroy(self):
         if self.repo_dir.exists():
-            subprocess.run(
-                ["rm", "-rf", "repo"],
-                cwd=self.working_dir
-            )
+            self._run_command("rm -rf repo")
             self.repo_dir.mkdir(exist_ok=True)
         else:
             raise FileNotFoundError("ERROR ::: Repo directory not found")
@@ -269,66 +353,62 @@ class AutoGitExtension:
     def start_supervisor(self):
         if self.allow_supervisor:
             try:
-                subprocess.run(["/usr/bin/supervisord"])
+                self._run_command("/usr/bin/supervisord")
             except Exception as e:
                 Tools.system_log(self.autogit_log, f"ERROR ::: Unable to start supervisord {e}")
 
     def supervisorctl(self, action, app):
         if self.allow_supervisor:
             try:
-                subprocess.run(
-                    ["supervisorctl", action, app],
-                    cwd=self.working_dir
-                )
+                return self._run_command(f"supervisorctl {action} {app}")
             except Exception as e:
-                Tools.system_log(self.autogit_log, f"ERROR ::: supervisorctl {action} {app}: {e}")
+                error = f"ERROR ::: supervisorctl {action} {app}: {e}"
+                Tools.system_log(self.autogit_log, error)
+                return error
+        return "ERROR ::: Supervisor disabled"
 
-    def supervisorctl_status(self, app) -> str:
+    def supervisorctl_status(self, app, supress_logs: bool = False) -> str:
         if self.allow_supervisor:
             try:
-                return str(
-                    subprocess.check_output(
-                        ["supervisorctl", "status", app],
-                    )
-                )
+                return self._run_command(f"supervisorctl status {app}", supress_logs=True)
             except Exception as e:
-                Tools.system_log(self.autogit_log, f"ERROR ::: supervisorctl status {app}: {e}")
+                error = f"ERROR ::: supervisorctl status {app}: {e}"
+                if not supress_logs:
+                    Tools.system_log(self.autogit_log, error)
+                return error
 
     def supervisorctl_reread(self):
         if self.allow_supervisor:
             try:
-                subprocess.run(
-                    ["supervisorctl", "reread"],
-                    cwd=self.working_dir
-                )
+                self._run_command(f"supervisorctl reread")
             except Exception as e:
                 Tools.system_log(self.autogit_log, f"ERROR ::: supervisorctl reread: {e}")
 
     def supervisorctl_update(self):
         if self.allow_supervisor:
             try:
-                subprocess.run(
-                    ["supervisorctl", "update"],
-                    cwd=self.working_dir
-                )
+                self._run_command(f"supervisorctl update")
             except Exception as e:
                 Tools.system_log(self.autogit_log, f"ERROR ::: supervisorctl update: {e}")
 
     def status_satellite(self) -> bool:
         if self.allow_supervisor:
-            _ = self.supervisorctl_status("satellite")
-            Tools.system_log(self.autogit_log, f"STATUS ::: {_}")
+            _ = self.supervisorctl_status("satellite", supress_logs=True)
 
             if isinstance(_, str):
-                if "started" in _ or "RUNNING" in _:
+                if "STOPPED" in _:
+                    return False
+                elif "RUNNING" in _:
+                    return True
+                if "started" in _:
                     return True
 
             return False
 
-    def start_satellite(self):
+    def start_satellite(self) -> str:
         self.supervisorctl_reread()
         self.supervisorctl_update()
-        self.supervisorctl("start", "satellite")
+        return self.supervisorctl("start", "satellite")
 
     def stop_satellite(self):
         self.supervisorctl("stop", "satellite")

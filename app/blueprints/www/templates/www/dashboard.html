@@ -1,6 +1,20 @@
 {% extends 'theme/main.html' %}
 
 {% block container %}
+    <div class="row" style="padding-bottom: 10px;">
+        <div class="column">
+            <div style="display: flex; justify-content: space-between">
+                <div>
+                    <a href="{{ url_for('www.autogit_logs') }}" class="button button-small" style="margin-bottom: 5px;">AutoGit Logs</a>
+                    <a href="{{ url_for('www.app_logs') }}" class="button button-small" style="margin-bottom: 5px;">App Logs</a>
+                </div>
+                <div>
+                    <a href="{{ url_for('www.logout') }}" class="button button-clear button-small" style="margin-bottom: 5px;">Logout</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="column">
             <h4 class="dashboard-header">Git App Status</h4>
@@ -15,11 +29,10 @@
             {% endif %}
             (
             {% if status %}
-                <a href="{{ url_for('api.stop_app') }}">Stop</a>
+                <a href="{{ url_for('api.stop_app') }}">Stop</a> / <a href="{{ url_for('api.restart_app') }}">Restart</a>
             {% else %}
                 <a href="{{ url_for('api.start_app') }}">Start</a>
             {% endif %}
-            / <a href="{{ url_for('api.restart_app') }}">Restart</a>
             )
         </div>
     </div>
@@ -33,42 +46,43 @@
     </div>
     <div class="row">
         <div class="column">
-            <label for="display_git">Git <span class="header-link">(
+            <label>Git <span class="header-link">(
                 <a href="{{ url_for('api.manual_pull') }}">Pull</a> /
                 <a href="{{ url_for('api.manual_clone') }}">Clone</a> /
                 <a href="{{ url_for('api.manual_destroy') }}">Destroy</a>
                 )</span>
             </label>
-            <input id="display_git" type="text" readonly value="{{ settings.GIT }}">
+            <pre style="margin-top: 0"><code>{{ settings.GIT }}</code></pre>
 
         </div>
     </div>
     <div class="row">
         <div class="column">
-            <label for="display_command">Command</label>
-            <input id="display_command" type="text" readonly value="{{ settings.COMMAND }}">
-            <span class="header-link" style="margin-bottom: 5px;">( Command will be ran from venv/bin/ )</span>
+            <label>Command <span class="header-link" style="margin-bottom: 5px;">( Command will be ran from venv/bin/ )</span></label>
+            <pre style="margin-top: 0"><code>{{ settings.COMMAND }}</code></pre>
+
         </div>
     </div>
     <div class="row">
         <div class="column">
-            <label for="display_webhook">Webhook Secret
+            <label>Webhook Secret
                 <span class="header-link">( <a href="{{ url_for('api.generate_new_secret') }}">Generate New Secret</a> )</span>
             </label>
-            <textarea id="display_webhook" style="height: 100px; margin-bottom: 0;">{{ settings.WH_SECRET }}</textarea>
-            <span class="header-link" style="margin-bottom: 5px;">( http://[ip address]:5500/api/webhook/[Webhook Secret] )</span>
+            <p style="margin-bottom: 8px;">http://[ip address]:5500/api/webhook/[Webhook Secret]</p>
+            <pre style="margin-top: 0"><code>{{ settings.WH_SECRET }}</code></pre>
+
         </div>
     </div>
     <div class="row" style="margin-top: 10px;">
         <div class="column">
-            <strong>Repo Folder Files</strong>
+            <label>Repo Folder Files</label>
         </div>
     </div>
     <div class="row">
         <div class="column">
             {% if repo_folder %}
                 {% for ld in repo_folder %}
-                    {{ ld }}<br/>
+                    <span class="file"> {{ ld }} </span>
                 {% endfor %}
             {% else %}
                 No files in repo folder

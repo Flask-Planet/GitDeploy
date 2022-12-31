@@ -16,6 +16,8 @@ def manual_clone():
             return redirect(url_for("www.dashboard"))
 
         if ag.repo_clone(settings["GIT"]):
+            ag.repo_create_venv()
+            ag.repo_install_requirements()
             return redirect(url_for("www.dashboard"))
     else:
         flash("Git is not configured")
