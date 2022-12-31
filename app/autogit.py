@@ -17,8 +17,21 @@ class Tools:
     def system_log(location: Path, text: str):
         if text == "" or text is None:
             return
+
+        text = text.split("\n")
+        clean_text = list()
+
+        if text:
+            for line in text:
+                if len(line) > 3:
+                    clean_text.append(
+                        line.lstrip(" ").rstrip(" ").rstrip("\n").rstrip("\r").rstrip(",")
+                    )
+
+        combine = "\n".join(clean_text)
+
         with open(location, "a") as f:
-            f.write(f"{text} | \n".strip())
+            f.write(f"{combine}\n")
 
     @staticmethod
     def write_supervisor_config(config_file: Path, config: str):
@@ -27,7 +40,7 @@ class Tools:
 
     @staticmethod
     def check_for_none(value: str) -> Union[str, None]:
-        str_values = ["null", "none", "undefined"]
+        str_values = ["null", "none", "undefined", ""]
 
         if isinstance(value, str):
             if value.lower() in str_values:
@@ -43,6 +56,10 @@ class Tools:
 class DefaultResources:
     autogit_settings = {
         "GIT": None,
+        "GIT_PRIVATE": False,
+        "GIT_URL": None,
+        "GIT_USERNAME": None,
+        "GIT_PASSWORD": None,
         "COMMAND": None,
         "WH_SECRET": Tools.generate_random_token(64),
         "FIRST_RUN": True,
@@ -98,6 +115,7 @@ class AutoGitExtension:
         self.repo_dir = self.working_dir / "repo"
         self.repo_python_instance = self.repo_dir / "venv" / "bin" / "python3"
         self.repo_requirements = self.repo_dir / "requirements.txt"
+        self.repo_git_config = self.repo_dir / ".git" / "config"
 
         self.settings_file = self.config_dir / ".autogit.json"
 
@@ -221,6 +239,37 @@ class AutoGitExtension:
 
         if self.settings_file.exists():
             old_settings = self.read_settings()
+
+            if clean_settings.get("GIT_PRIVATE") != old_settings.get("GIT_PRIVATE") \
+                    or clean_settings.get("GIT_USERNAME") != old_settings.get("GIT_USERNAME") \
+                    or clean_settings.get("GIT_PASSWORD") != old_settings.get("GIT_PASSWORD"):
+
+                if clean_settings.get("GIT_PRIVATE"):
+
+                    git_url = clean_settings.get("GIT_URL")
+                    git_username = clean_settings.get("GIT_USERNAME")
+                    git_password = clean_settings.get("GIT_PASSWORD")
+
+                    proto_call = git_url.split("://")[0]
+
+                    if proto_call == "https":
+                        clean_settings["GIT"] = git_url.replace("https://", f"https://{git_username}:{git_password}@")
+                    else:
+                        clean_settings["GIT"] = git_url.replace("http://", f"http://{git_username}:{git_password}@")
+
+                else:
+
+                    clean_settings["GIT"] = clean_settings.get("GIT_URL")
+
+                if self.repo_git_config.exists():
+                    with open(self.repo_git_config, "r") as f:
+                        git_config = f.read()
+
+                    git_config = git_config.replace(f"url = {old_settings.get('GIT')}", f"url = {clean_settings.get('GIT')}")
+
+                    with open(self.repo_git_config, "w") as f:
+                        f.write(git_config)
+
             if auto_actions:
                 if clean_settings.get("GIT") != old_settings.get("GIT"):
                     self.repo_destroy()
@@ -272,9 +321,10 @@ class AutoGitExtension:
 
     def repo_clone(self, repo_url: str) -> bool:
         if not Path(self.repo_dir / ".git").exists():
+
             try:
                 self.repo = Repo.clone_from(repo_url, self.repo_dir)
-                Tools.system_log(self.autogit_log, f"REPO ::: Repo cloned from {repo_url}")
+                Tools.system_log(self.autogit_log, f"REPO ::: Repo cloned")
                 return True
             except Exception as e:
                 Tools.system_log(self.autogit_log, f"ERROR ::: Cloning repo: {e}")
@@ -291,7 +341,7 @@ class AutoGitExtension:
             except Exception as e:
                 Tools.system_log(self.autogit_log, f"ERROR ::: Pulling repo: {e}")
 
-        Tools.system_log(self.autogit_log, f"INFO ::: No repo exists at {self.repo_dir}")
+        Tools.system_log(self.autogit_log, f"INFO ::: Unable to pull repo {self.repo_dir}")
         return False
 
     def repo_create_venv(self):
@@ -318,7 +368,8 @@ class AutoGitExtension:
 
     def repo_destroy(self):
         if self.repo_dir.exists():
-            self._run_command("rm -rf repo")
+            self._run_command("rm -rf repo", supress_logs=True)
+            Tools.system_log(self.autogit_log, f"REPO ::: Repo destroyed")
             self.repo_dir.mkdir(exist_ok=True)
         else:
             raise FileNotFoundError("ERROR ::: Repo directory not found")

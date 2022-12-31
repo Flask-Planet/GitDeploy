@@ -1,3 +1,7 @@
+[x-cloak] {
+    display: none !important;
+}
+
 body {
     background-color: #171b22;
 }
@@ -58,7 +62,6 @@ body {
     padding: 5px;
     border-radius: 5px;
     background-color: rgba(211, 52, 255, 0.1);
-    font-weight: bold;
     margin-bottom: 10px;
 }
 
@@ -101,6 +104,7 @@ body {
 .u-w100 {
     width: 100%;
 }
+
 
 .u-underline {
     text-decoration: underline;

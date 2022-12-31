@@ -22,4 +22,4 @@ def login():
             flash("Invalid tokens")
             return render_template(bp.tmpl("login.html"))
 
-    return render_template(bp.tmpl("login.html"))
+    return render_template(bp.tmpl("login.html"), staging=True)

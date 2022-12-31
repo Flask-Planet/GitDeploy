@@ -21,6 +21,7 @@ def first_run():
 
     return render_template(
         bp.tmpl("first_run.html"),
+        staging=True,
         t1=new_tokens.get("T1"),
         t2=new_tokens.get("T2")
     )
