@@ -8,14 +8,16 @@
 
     <meta charset="UTF-8">
     <title>AutoGit - Flask-Planet</title>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
-<div class="container header">
-    <img src="{{ url_for('theme.static', filename='flask_planet_tpbk.png') }}" alt="logo" class="logo">
-    <p style="margin: 0; font-weight: bold">Flask-Planet</p>
-    <p style="margin: 0">AutoGit</p>
+<div class="container container-info">
+    <div>
+        <p style="margin: 0; font-weight: bold; color: #ababab">AutoGit</p>
+        <p style="margin: 0;">Git Repo deploy manager</p>
+    </div>
 </div>
-<div class="container-sm">
+<div class="container container-main">
 
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -28,6 +30,15 @@
     {% block container %}
 
     {% endblock container %}
+</div>
+<div class="container container-info">
+    <div style="display: flex; justify-content: start; align-items: center">
+        <img style="height: 60px; width: 60px; margin-right: 10px;" src="{{ url_for('theme.static', filename='flask_planet.png') }}" alt="logo" class="logo">
+        <p style="margin: 0"><a href="https://github.com/Flask-Planet" target="_blank" rel="noopener noreferrer nofollow">Flask-Planet</a></p>
+    </div>
+    <div>
+        <p style="margin: 0">Powered by <a href="https://flask.palletsprojects.com/" target="_blank" rel="noopener noreferrer nofollow">Flask</a></p>
+    </div>
 </div>
 </body>
 </html>

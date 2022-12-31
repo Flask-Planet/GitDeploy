@@ -1,0 +1,24 @@
+{% extends 'theme/main.html' %}
+
+{% block container %}
+    <div class="row"
+         x-data="{
+            scrollToBottom(ele) {
+                ele.scrollTop = ele.scrollHeight;
+            }
+         }"
+    >
+        <div class="column">
+            <label>App Logs</label>
+            <div class="scroll-box" x-init="scrollToBottom($el)">
+                {% for log in satellite_logs %}
+                    <pre style="margin-bottom: 2px; margin-top: 0"><code>{{ log }}</code></pre>
+                    {% if loop.last %}<input type="hidden" autofocus>{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <a href="{{ url_for('www.app_logs') }}" class="button u-w100" style="margin-bottom: 5px;">Refresh</a>
+    <a href="{{ url_for('www.dashboard') }}" class="button button-black u-w100" style="margin-bottom: 0;">Back</a>
+{% endblock container %}

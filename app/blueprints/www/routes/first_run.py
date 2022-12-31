@@ -17,8 +17,10 @@ def first_run():
     if not settings["FIRST_RUN"]:
         return redirect(url_for("www.login"))
 
+    new_tokens = ag.set_tokens(settings)
+
     return render_template(
         bp.tmpl("first_run.html"),
-        t1=settings.get("T1"),
-        t2=settings.get("T2")
+        t1=new_tokens.get("T1"),
+        t2=new_tokens.get("T2")
     )
