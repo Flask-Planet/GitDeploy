@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 
 from flask import Flask
 from flask_bigapp import BigApp, Security
@@ -8,7 +7,7 @@ from .autogit import AutoGitExtension, Tools
 
 ba = BigApp()
 sec = Security()
-ag = AutoGitExtension(Path(Path.cwd()), allow_supervisor=False)
+ag = AutoGitExtension()
 
 ag.setup()
 ag.auto_deploy()
