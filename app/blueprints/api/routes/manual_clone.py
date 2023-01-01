@@ -15,10 +15,20 @@ def manual_clone():
             flash("Git repository already exists. Destroy it first.")
             return redirect(url_for("www.dashboard"))
 
-        if ag.repo_clone(settings["GIT"]):
-            ag.repo_create_venv()
-            ag.repo_install_requirements()
+        clone = ag.repo_clone(settings["GIT"])
+        if clone:
+            flash("Repo cloned successfully")
+            if not ag.repo_requirements.exists():
+                flash("Requirements file not found, add requirements.txt to the root of your repo")
+            else:
+                flash("Requirements installed")
+                ag.repo_create_venv()
+                ag.repo_install_requirements()
             return redirect(url_for("www.dashboard"))
+        else:
+            flash("Could not clone repository, check logs.")
+            return redirect(url_for("www.dashboard"))
+
     else:
         flash("Git is not configured")
         return redirect(url_for("www.dashboard"))

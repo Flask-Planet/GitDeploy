@@ -9,12 +9,18 @@ from .. import bp
 def manual_pull():
     settings = ag.read_settings()
     if settings["GIT"]:
+        if not ag.repo_dir.exists():
+            flash("Git repository not found. Clone it first.")
+            return redirect(url_for("www.dashboard"))
+
         if ag.repo_pull():
+            ag.repo_install_requirements()
             flash("Changes pulled")
             return redirect(url_for("www.dashboard"))
         else:
-            flash("No repo exists in repo dir")
+            flash("Pull failed, check autogit logs.")
             return redirect(url_for("www.dashboard"))
+
     else:
         flash("Git is not configured")
         return redirect(url_for("www.dashboard"))

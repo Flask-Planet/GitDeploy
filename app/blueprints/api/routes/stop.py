@@ -7,6 +7,5 @@ from .. import bp
 @bp.get('/stop')
 @sec.login_required('www.login', 'logged_in')
 def stop_app():
-    resp = ag.stop_satellite()
-    flash(resp)
+    ag.stop_satellite()
     return redirect(url_for("www.dashboard"))

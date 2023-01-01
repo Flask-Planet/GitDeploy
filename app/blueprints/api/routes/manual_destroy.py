@@ -7,5 +7,6 @@ from .. import bp
 @bp.get('/manual-destroy')
 @sec.login_required('www.login', 'logged_in')
 def manual_destroy():
+    ag.stop_satellite()
     ag.repo_destroy()
     return redirect(url_for("www.dashboard"))

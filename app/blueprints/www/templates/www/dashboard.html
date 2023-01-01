@@ -5,13 +5,8 @@
         <div class="column">
             <div style="display: flex; justify-content: space-between">
                 <div>
-                    <a href="{{ url_for('www.autogit_logs') }}" class="button button-small" style="margin-bottom: 5px;">AutoGit Logs</a>
-                    <a href="{{ url_for('www.app_logs') }}" class="button button-small" style="margin-bottom: 5px;">App Logs</a>
+                    <a href="{{ url_for('www.logs') }}" class="button button-small" style="margin-bottom: 5px;">Logs</a>
                 </div>
-                <div>
-                    <a href="{{ url_for('www.logout') }}" class="button button-clear button-small" style="margin-bottom: 5px;">Logout</a>
-                </div>
-
             </div>
         </div>
     </div>
@@ -29,9 +24,10 @@
             {% endif %}
             (
             {% if status %}
-                <a href="{{ url_for('api.stop_app') }}">Stop</a> / <a href="{{ url_for('api.restart_app') }}">Restart</a>
+                <a href="{{ url_for('api.stop_app') }}" @click="$el.innerText = 'Stopping...'">Stop</a> /
+                <a href="{{ url_for('api.restart_app') }}" @click="$el.innerText = 'Restarting...'">Restart</a>
             {% else %}
-                <a href="{{ url_for('api.start_app') }}">Start</a>
+                <a href="{{ url_for('api.start_app') }}" @click="$el.innerText = 'Starting...'">Start</a>
             {% endif %}
             )
         </div>
@@ -44,16 +40,30 @@
 
         </div>
     </div>
-    <div class="row">
+    <div class="row" x-data="{show_destroy: false}">
         <div class="column">
             <label>Git <span class="header-link">(
-                <a href="{{ url_for('api.manual_pull') }}">Pull</a> /
-                <a href="{{ url_for('api.manual_clone') }}">Clone</a> /
-                <a href="{{ url_for('api.manual_destroy') }}">Destroy</a>
-                )</span>
+                <a href="{{ url_for('api.manual_pull') }}" @click="$el.innerText = 'Pulling...'">Pull</a> /
+                <a href="{{ url_for('api.manual_clone') }}" @click="$el.innerText = 'Cloning...'">Clone</a> /
+                <a @click="show_destroy = true" style="cursor: pointer;">Destroy</a>
+                )
+                {% if settings.GIT_URL is not none %}
+                    {% if settings.GIT_PRIVATE == True %}PRIVATE{% else %}PUBLIC{% endif %}</span>
+                {% endif %}
             </label>
-            <pre style="margin-top: 0"><code>{{ settings.GIT }}</code></pre>
-
+            <div class="alert" x-show="show_destroy" x-cloak>
+                <div style="padding: 10px; display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                    <div>
+                        <p style="margin: 0;"><strong>Warning!</strong></p>
+                        <p style="margin: 0;">This will destroy the git repository and all files will be lost. Are you sure you want to continue?</p>
+                    </div>
+                    <p style="margin: 0; padding: 10px; text-align: center; display: flex;">
+                        <a href="{{ url_for('api.manual_destroy') }}" class="button button-small" style="margin-bottom: 0; margin-right: 10px;">Yes</a>
+                        <a href="#" class="button button-outline button-small" @click="show_destroy = false;" style="margin: 0">No</a>
+                    </p>
+                </div>
+            </div>
+            <pre style="margin-top: 0"><code>{{ settings.GIT_URL }}</code></pre>
         </div>
     </div>
     <div class="row">
@@ -87,6 +97,12 @@
             {% else %}
                 No files in repo folder
             {% endif %}
+        </div>
+    </div>
+
+    <div class="row" style="padding-top: 25px;">
+        <div class="column" style="text-align: center">
+            <a href="{{ url_for('api.reset_tokens') }}" class="button button-clear" style="margin-bottom: 5px;">Reset Login Tokens</a>
         </div>
     </div>
 {% endblock container %}

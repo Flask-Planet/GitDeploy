@@ -11,21 +11,32 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
-<div class="container container-info">
+<div class="container container-info" style="display: flex; justify-content: space-between">
     <div>
         <p style="margin: 0; font-weight: bold; color: #ababab">AutoGit</p>
         <p style="margin: 0;">Git Repo deploy manager</p>
     </div>
+    {% if staging %}{% else %}
+        <div>
+            <a href="{{ url_for('www.logout') }}" class="button button-clear button-small" style="margin-bottom: 5px;">Logout</a>
+        </div>
+    {% endif %}
 </div>
 <div class="container container-main">
-
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+    <div x-data>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert" @click="$el.remove();">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <p style="margin: 0">{{ message }}</p>
+                            <span class="button button-small button-outline" style="margin: 4px;">X</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
 
     {% block container %}
 

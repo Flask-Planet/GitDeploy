@@ -2,7 +2,7 @@ from flask import redirect, url_for
 
 from app import ag, sec
 from .. import bp
-from ....autogit import Tools
+from autogit.tools import Tools
 
 
 @bp.get('/generate-new-secret')
