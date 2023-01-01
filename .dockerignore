@@ -1,9 +1,11 @@
 .env
 .idea
-Dockerfile
-README.md
 .gitignore
 .dockerignore
+Dockerfile
+README.md
 repo
 config
 logs
+docker-compose.yaml
+venv

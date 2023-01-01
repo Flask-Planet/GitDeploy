@@ -10,7 +10,7 @@
     >
         <div class="column">
             <label>AutoGit Logs
-                <span class="header-link">( <a href="{{ url_for('www.autogit_logs', clear=True) }}">Clear Logs</a> )</span>
+                <span class="header-link">( <a href="{{ url_for('www.logs', clear=True) }}">Clear Logs</a> )</span>
             </label>
             <div class="scroll-box" x-init="scrollToBottom($el)">
                 {% for log in autogit_logs %}
@@ -21,6 +21,6 @@
         </div>
     </div>
 
-    <a href="{{ url_for('www.autogit_logs') }}" class="button u-w100" style="margin-bottom: 5px;">Refresh</a>
+    <a href="{{ url_for('www.logs') }}" class="button u-w100" style="margin-bottom: 5px;">Refresh</a>
     <a href="{{ url_for('www.dashboard') }}" class="button button-black u-w100" style="margin-bottom: 0;">Back</a>
 {% endblock container %}

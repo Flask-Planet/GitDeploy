@@ -34,10 +34,7 @@ def settings_app():
         settings["COMMAND"] = request.form.get("command")
         settings["WH_SECRET"] = request.form.get("wh_secret")
 
-        if request.form.get("auto_deploy") == "on":
-            ag.write_settings(settings, auto_actions=True)
-        else:
-            ag.write_settings(settings, auto_actions=False)
+        ag.write_settings(settings)
 
         return redirect(url_for("www.dashboard"))
 

@@ -26,7 +26,7 @@ def manual_clone():
                 ag.repo_install_requirements()
             return redirect(url_for("www.dashboard"))
         else:
-            flash("Could not clone repository, check autogit logs.")
+            flash("Could not clone repository, check logs.")
             return redirect(url_for("www.dashboard"))
 
     else:

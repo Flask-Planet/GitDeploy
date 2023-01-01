@@ -14,6 +14,7 @@ def manual_pull():
             return redirect(url_for("www.dashboard"))
 
         if ag.repo_pull():
+            ag.repo_install_requirements()
             flash("Changes pulled")
             return redirect(url_for("www.dashboard"))
         else:

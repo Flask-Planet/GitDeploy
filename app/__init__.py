@@ -1,23 +1,29 @@
 import os
-from pathlib import Path
 
 from flask import Flask
 from flask_bigapp import BigApp, Security
 
-from .autogit import AutoGitExtension, Tools
+from autogit import AutoGit
+from autogit.tools import Tools
 
 ba = BigApp()
 sec = Security()
-_this_path = Path().cwd()
-ag = AutoGitExtension(_this_path, allow_supervisor=False)
+
+ag = AutoGit()
 
 ag.setup()
 ag.auto_deploy()
 
-os.environ["AUTOGIT_SK"] = Tools.generate_random_token(256)
-os.environ["AUTOGIT_ENV"] = "True"
+settings = ag.read_settings()
 
-ag.del_autogit_log()
+if settings["AUTOGIT_SK"]:
+    os.environ["AUTOGIT_SK"] = settings["AUTOGIT_SK"]
+else:
+    settings["AUTOGIT_SK"] = Tools.generate_random_token(128)
+    os.environ["AUTOGIT_SK"] = settings["AUTOGIT_SK"]
+    ag.write_settings(settings)
+
+os.environ["AUTOGIT_ENV"] = "True"
 
 
 def create_app():
