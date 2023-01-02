@@ -1,4 +1,3 @@
-GitPython
 Flask
 python-dotenv
 Flask-BigApp

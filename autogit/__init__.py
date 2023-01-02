@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
-from git import Repo
-
 from .logger import Logger
+from .pip_cli import PipCli
+from .git_cli import GitCli
 from .resources import Resources
 from .supervisor import SupervisorctlController, SupervisorIni, Supervisor
 from .terminal import Terminal
@@ -22,7 +22,6 @@ class AutoGit:
 
     settings_file: Path
 
-    repo: Repo
     repo_dir: Path
     repo_python_instance: Path
     repo_venv_bin: Path
@@ -50,8 +49,8 @@ class AutoGit:
         self.settings_file = self.config_dir / ".autogit.json"
         self.log_file_path = self.log_dir / "autogit.log"
 
-        self.repo_python_instance = self.repo_dir / "venv" / "bin" / "python3"
         self.repo_venv_bin = self.repo_dir / "venv" / "bin"
+        self.repo_python_instance = self.repo_venv_bin / "python3"
         self.repo_requirements = self.repo_dir / "requirements.txt"
         self.repo_git_config = self.repo_dir / ".git" / "config"
 
@@ -88,18 +87,18 @@ class AutoGit:
 
         self.log_file_path.touch(exist_ok=True)
 
-        if not self.settings_file.exists():
-            self.write_settings(Resources.autogit_settings)
-
         if not self.satellite_ini.path.exists():
             self.supervisor.write_init(self.satellite_ini)
+
+        if not self.settings_file.exists():
+            self.write_settings(Resources.autogit_settings)
 
     def auto_deploy(self):
         if self.settings_file.exists():
             settings = self.read_settings()
             git = settings.get("GIT")
             command = settings.get("COMMAND")
-            if git is not None and command is not None:
+            if git is not None:
                 self.repo_clone(git)
                 self.repo_create_venv()
                 if self.repo_requirements.exists() and self.repo_python_instance.exists():
@@ -108,6 +107,7 @@ class AutoGit:
                     self.logger.log("ERROR ::: Auto deploy stopped. No requirements.txt file found in repo")
                     return
 
+            if command is not None:
                 self.satellite_ini.command = command
                 self.supervisor.write_init(self.satellite_ini)
 
@@ -175,6 +175,7 @@ class AutoGit:
             settings = current_settings
             settings["T1"] = Tools.generate_random_token(24)
             settings["T2"] = Tools.generate_random_token(24)
+            settings["FIRST_RUN"] = False
             self.write_settings(settings)
             return settings
 
@@ -193,7 +194,8 @@ class AutoGit:
     def repo_clone(self, repo_url: str) -> bool:
         if not Path(self.repo_dir / ".git").exists():
             try:
-                self.repo = Repo.clone_from(repo_url, self.repo_dir)
+                with GitCli(f"clone {repo_url} .", self.repo_dir) as output:
+                    self.logger.log(output)
                 self.logger.log(f"INFO ::: Repo cloned")
                 return True
             except Exception as e:
@@ -206,7 +208,8 @@ class AutoGit:
     def repo_pull(self) -> bool:
         if Path(self.repo_dir / ".git").exists():
             try:
-                Repo(self.repo_dir).remotes.origin.pull()
+                with GitCli(f"pull", self.repo_dir) as output:
+                    self.logger.log(output)
                 self.logger.log(f"INFO ::: Repo pulled")
                 return True
             except Exception as e:
@@ -227,9 +230,14 @@ class AutoGit:
         self.logger.log(f"ERROR ::: repo dir does not exist")
         return False
 
+    def repo_destroy_venv(self):
+        if self.repo_dir.exists():
+            with Terminal(f"rm -rf venv", cwd=self.repo_dir):
+                self.logger.log(f"INFO ::: venv destroyed")
+
     def repo_install_requirements(self):
         if self.repo_python_instance.exists():
-            with Terminal(f"{self.repo_python_instance} -m pip install -r requirements.txt", cwd=self.repo_dir) as output:
+            with PipCli(f"install -r requirements.txt", cwd=self.repo_dir) as output:
                 self.logger.log(output)
                 return True
         self.logger.log(f"ERROR ::: repo python instance does not exist, install venv first")

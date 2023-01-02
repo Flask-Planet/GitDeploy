@@ -6,14 +6,14 @@ from .. import bp
 
 @bp.route('/first-run', methods=["GET", "POST"])
 def first_run():
-    settings = ag.read_settings()
-
     if request.method == "POST":
-        settings["FIRST_RUN"] = False
-        ag.write_settings(settings)
         session["logged_in"] = True
+        session.modified = True
         return redirect(url_for("www.dashboard"))
 
+    settings = ag.read_settings()
+    session["logged_in"] = False
+    session.modified = True
     if not settings["FIRST_RUN"]:
         return redirect(url_for("www.login"))
 

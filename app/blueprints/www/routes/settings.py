@@ -33,6 +33,7 @@ def settings_app():
 
         settings["COMMAND"] = request.form.get("command")
         settings["WH_SECRET"] = request.form.get("wh_secret")
+        settings["WH_SECRET"] = request.form.get("wh_secret")
 
         ag.write_settings(settings)
 
