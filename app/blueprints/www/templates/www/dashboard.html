@@ -48,7 +48,7 @@
                 <a @click="show_destroy = true" style="cursor: pointer;">Destroy</a>
                 )
                 {% if settings.GIT_URL is not none %}
-                    {% if settings.GIT_PRIVATE == True %}PRIVATE{% else %}PUBLIC{% endif %}</span>
+                    {% if settings.GIT_PRIVATE == True %} PRIVATE {% else %} PUBLIC {% endif %}</span>
                 {% endif %}
             </label>
             <div class="alert" x-show="show_destroy" x-cloak>
@@ -75,14 +75,28 @@
     </div>
     <div class="row">
         <div class="column">
-            <label>Webhook Secret
-                <span class="header-link">( <a href="{{ url_for('api.generate_new_secret') }}">Generate New Secret</a> )</span>
+            <label>Webhook
+                <span class="header-link">(
+                    {% if settings.WH_ENABLED %}
+                        <a href="{{ url_for('api.disable_webhook') }}">Disable</a>
+                    {% else %}
+                        <a href="{{ url_for('api.enable_webhook') }}">Enable</a>
+                    {% endif %}
+                    )</span>
+                {% if settings.WH_ENABLED %}
+                    ENABLED
+                {% else %}
+                    DISABLED
+                {% endif %}
             </label>
-            <p style="margin-bottom: 8px;">http://[ip address]:5500/api/webhook/[Webhook Secret]</p>
-            <pre style="margin-top: 0"><code>{{ settings.WH_SECRET }}</code></pre>
+
+            <p style="margin-bottom: 8px; font-style: italic;">Secret <a href="{{ url_for('api.generate_new_secret') }}">Generate New Secret</a></p>
+            <pre style="margin: 0"><code>{{ settings.WH_SECRET }}</code></pre>
+            <p style="margin-bottom: 8px; margin-top: 5px">/api/webhook/[Webhook Secret] - Listening to "main" branch</p>
 
         </div>
     </div>
+
     <div class="row" style="margin-top: 10px;">
         <div class="column">
             <label>Repo Folder Files</label>
@@ -96,6 +110,74 @@
                 {% endfor %}
             {% else %}
                 No files in repo folder
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 30px;">
+        <div class="column">
+            <label>Repo venv
+                <span class="header-link" style="margin-bottom: 5px;">
+                {% if git_exists %}
+                    {% if venv %}
+                        ( <a href="{{ url_for('api.manual_recreate_venv') }}" @click="$el.innerText = 'Recreating...'">Recreate</a> /
+                        <a href="{{ url_for('api.manual_destroy_venv') }}" @click="$el.innerText = 'Destroying...'">Destroy</a> /
+                        <a href="{{ url_for('api.manual_install_req') }}" @click="$el.innerText = 'Installing requirements...'">Install requirements.txt</a> )
+                    {% else %}
+                        ( No venv found <a href="{{ url_for('api.manual_create_venv') }}" @click="$el.innerText = 'Creating...'">Create venv</a> or clone repo.
+                        )
+                    {% endif %}
+                {% else %}
+                    ( No git repo found, please clone one first. )
+                {% endif %}
+                </span>
+            </label>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="column" x-data="{
+        v:0,
+        fetch_loop(){
+            do{
+                this.v++;
+                setTimeout(async () => {
+                    $fragmentor('{{ url_for("api.check_packages") }}', $refs.packages)
+                }, 1000)
+            }while(this.v < 5)
+        }
+        }">
+            <table>
+                <thead>
+                <tr>
+                    <th>Packages</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        {% if git_exists %}
+                            {% if venv %}
+                                <span x-init="fetch_loop()" x-ref="packages"></span>
+                            {% else %}
+                                No venv created
+                            {% endif %}
+
+                        {% else %}
+                            No git repo found, please clone one first
+                        {% endif %}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            {% if venv %}
+                <form name="pip_install" method="post">
+                    <label for="install">Install a package</label>
+                    <div class="field-append-group">
+                        <input name="install" id="install" type="text" placeholder="package">
+                        <input type="submit" class="button" value="Install">
+                    </div>
+                </form>
             {% endif %}
         </div>
     </div>

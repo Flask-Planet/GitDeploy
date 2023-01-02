@@ -12,11 +12,12 @@ def login():
         return redirect(url_for("www.first_run"))
 
     if request.method == "POST":
-        setting_tokens = [settings["T1"], settings["T2"]]
-        form_tokens = [request.form.get("t1"), request.form.get("t2")]
+        t1 = request.form.get("t1")
+        t2 = request.form.get("t2")
 
-        if setting_tokens == form_tokens:
+        if t1 == settings.get("T1") and t2 == settings.get("T2"):
             session["logged_in"] = True
+            session.modified = True
             return redirect(url_for("www.dashboard"))
         else:
             flash("Invalid tokens")

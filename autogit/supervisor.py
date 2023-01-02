@@ -64,6 +64,7 @@ class Supervisor:
 class SupervisorctlController:
 
     def __init__(self, command_group: list[str]):
+        self.process = None
         self.command_group = command_group
 
     def __enter__(self) -> list[str]:
@@ -87,4 +88,5 @@ class SupervisorctlController:
         return list(filter(None, _))
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.process.terminate()
+        if self.process:
+            self.process.terminate()
