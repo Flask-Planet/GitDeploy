@@ -18,6 +18,7 @@ def webhook(secret):
     settings = ag.read_settings()
     enabled = settings.get('WH_ENABLED', False)
     settings_secret = settings.get('WH_SECRET')
+    default_branch = settings.get('GIT_BRANCH', 'master')
 
     if not enabled:
         return 'webhook disabled', 500
@@ -38,7 +39,7 @@ def webhook(secret):
             except IndexError:
                 ref = "null"
 
-            if ref == "main":
+            if ref == default_branch:
                 hook_git = data.get("repository").get("clone_url")
                 if hook_git == settings.get("GIT_URL"):
                     pull_repo()
@@ -56,7 +57,7 @@ def webhook(secret):
         except IndexError:
             ref = "null"
 
-        if ref == "main":
+        if ref == default_branch:
             hook_git = payload.get("repository").get("clone_url")
             if hook_git == settings.get("GIT_URL"):
                 pull_repo()

@@ -99,21 +99,22 @@ class AutoGit:
             git = settings.get("GIT")
             command = settings.get("COMMAND")
             if git is not None:
-                self.repo_clone(git)
-                self.repo_create_venv()
-                if self.repo_requirements.exists() and self.repo_python_instance.exists():
-                    self.repo_install_requirements()
-                else:
-                    self.logger.log("ERROR ::: Auto deploy stopped. No requirements.txt file found in repo")
-                    return
+                if not self.repo_pull():
+                    self.repo_clone(git)
+                    settings["GIT_BRANCH"] = self.repo_branch()
+                    self.write_settings(settings)
+                    self.repo_create_venv()
+                    if self.repo_requirements.exists() and self.repo_python_instance.exists():
+                        self.repo_install_requirements()
+                    else:
+                        self.logger.log("ERROR ::: Auto deploy stopped. No requirements.txt file found in repo")
+                        return
 
             if command is not None:
-                self.satellite_ini.command = command
-                self.supervisor.write_init(self.satellite_ini)
-
                 if self.allow_supervisor:
-                    with SupervisorctlController(['reread', 'update', 'restart satellite']) as output:
+                    with SupervisorctlController(['reread']) as output:
                         self.logger.log(output)
+                    self.start_satellite()
 
     def read_settings(self) -> dict:
         with open(self.settings_file, "r") as f:
@@ -154,7 +155,8 @@ class AutoGit:
                 with open(self.repo_git_config, "r") as f:
                     git_config = f.read()
 
-                git_config = git_config.replace(f"url = {old_settings.get('GIT')}", f"url = {clean_settings.get('GIT')}")
+                git_config = git_config.replace(f"url = {old_settings.get('GIT')}",
+                                                f"url = {clean_settings.get('GIT')}")
 
                 with open(self.repo_git_config, "w") as f:
                     f.write(git_config)
@@ -204,6 +206,15 @@ class AutoGit:
 
         self.logger.log(f"INFO ::: Repo already exists")
         return False
+
+    def repo_branch(self) -> str:
+        try:
+            with GitCli(f"branch", self.repo_dir) as output:
+                self.logger.log(output)
+            return output.replace("* ", "")
+        except Exception as e:
+            self.logger.log(f"ERROR ::: Querying repo branch")
+            return ""
 
     def repo_pull(self) -> bool:
         if Path(self.repo_dir / ".git").exists():

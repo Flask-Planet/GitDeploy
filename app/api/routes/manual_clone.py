@@ -17,6 +17,8 @@ def manual_clone():
 
         clone = ag.repo_clone(settings["GIT"])
         if clone:
+            settings["GIT_BRANCH"] = ag.repo_branch()
+            ag.write_settings(settings)
             flash("Repo cloned successfully")
             if not ag.repo_requirements.exists():
                 flash("Requirements file not found, add requirements.txt to the root of your repo")
