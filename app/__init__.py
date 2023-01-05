@@ -30,6 +30,6 @@ def create_app():
     app = Flask(__name__)
     ba.init_app(app)
     ba.import_blueprints("blueprints")
-    ba.import_structures("structures")
+    ba.import_theme("theme")
 
     return app

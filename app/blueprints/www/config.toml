@@ -1,5 +1,12 @@
 enabled = "yes"
+
+[settings]
 url_prefix = "/"
+#subdomain = ""
+#url_defaults = { }
+#static_folder = "static"
+template_folder = "templates"
+#static_url_path = "/api/static"
 
 [session]
 logged_in = false
