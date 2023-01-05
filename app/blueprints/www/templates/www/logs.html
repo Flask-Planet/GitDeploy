@@ -14,7 +14,7 @@
             </label>
             <div class="scroll-box" x-init="scrollToBottom($el)">
                 {% for log in autogit_logs %}
-                    <pre style="margin-bottom: 2px; margin-top: 0"><code>{{ log }}</code></pre>
+                    <pre style="margin: 0"><code>{{ log }}</code></pre>
                     {% if loop.last %}<input type="hidden" autofocus>{% endif %}
                 {% endfor %}
             </div>

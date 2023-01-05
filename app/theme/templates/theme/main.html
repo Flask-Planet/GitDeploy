@@ -12,17 +12,7 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
-<div class="container container-info" style="display: flex; justify-content: space-between">
-    <div>
-        <p style="margin: 0; font-weight: bold; color: #ababab">AutoGit</p>
-        <p style="margin: 0;">Git Repo deploy manager</p>
-    </div>
-    {% if staging %}{% else %}
-        <div>
-            <a href="{{ url_for('www.logout') }}" class="button button-clear button-small" style="margin-bottom: 5px;">Logout</a>
-        </div>
-    {% endif %}
-</div>
+{% include 'theme/header.html' %}
 <div class="container container-main">
     <div x-data>
         {% with messages = get_flashed_messages() %}
@@ -43,14 +33,6 @@
 
     {% endblock container %}
 </div>
-<div class="container container-info">
-    <div style="display: flex; justify-content: start; align-items: center">
-        <img style="height: 60px; width: 60px; margin-right: 10px;" src="{{ url_for('theme.static', filename='flask_planet.png') }}" alt="logo" class="logo">
-        <p style="margin: 0"><a href="https://github.com/Flask-Planet" target="_blank" rel="noopener noreferrer nofollow">Flask-Planet</a></p>
-    </div>
-    <div>
-        <p style="margin: 0">Powered by <a href="https://flask.palletsprojects.com/" target="_blank" rel="noopener noreferrer nofollow">Flask</a></p>
-    </div>
-</div>
+{% include 'theme/footer.html' %}
 </body>
 </html>

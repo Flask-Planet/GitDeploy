@@ -29,7 +29,7 @@ class Resources:
     autogit_settings = {
         "AUTOGIT_SK": _wash_none_env(os.getenv("AUTOGIT_SK")),
         "GIT": None,
-        "GIT_BRANCH": os.environ.get("AUTOGIT_GIT_BRANCH", "main"),
+        "GIT_BRANCH": os.environ.get("AUTOGIT_GIT_BRANCH", "master"),
         "GIT_PRIVATE": _wash_bool_env(os.environ.get("AUTOGIT_GIT_PRIVATE")),
         "GIT_URL": _wash_none_env(os.getenv("AUTOGIT_GIT_URL")),
         "GIT_USERNAME": _wash_none_env(os.getenv("AUTOGIT_GIT_TOKEN_NAME")),
