@@ -101,7 +101,7 @@ class AutoGit:
             if git is not None:
                 if not self.repo_pull():
                     self.repo_clone(git)
-                    settings["GIT_BRANCH"] = self.repo_branch()
+                    settings["GIT_BRANCH"] = self.repo_branch().replace("\n", "")
                     self.write_settings(settings)
                     self.repo_create_venv()
                     if self.repo_requirements.exists() and self.repo_python_instance.exists():
