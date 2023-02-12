@@ -6,22 +6,22 @@ from autogit.terminal import Terminal
 
 
 def setup_env():
-    port = os.getenv("AUTOGIT_PORT")
-    workers = os.getenv("AUTOGIT_WORKERS")
-    cwd = os.getenv("AUTOGIT_CWD")
+    port = os.getenv("GD_PORT")
+    workers = os.getenv("GD_WORKERS")
+    cwd = os.getenv("GD_CWD")
 
     if not port:
-        os.environ["AUTOGIT_PORT"] = "5500"
+        os.environ["GD_PORT"] = "5500"
 
     if not workers:
-        os.environ["AUTOGIT_WORKERS"] = "3"
+        os.environ["GD_WORKERS"] = "3"
 
     if not cwd:
-        os.environ["AUTOGIT_CWD"] = "/autogit"
+        os.environ["GD_CWD"] = "/autogit"
 
 
 def setup_folders():
-    cwd = Path(os.getenv("AUTOGIT_CWD"))
+    cwd = Path(os.getenv("GD_CWD"))
 
     working_dir = cwd
     log_dir = working_dir / "logs"
@@ -39,8 +39,8 @@ def setup_folders():
 
 
 def setup_supervisor():
-    port = os.getenv("AUTOGIT_PORT")
-    workers = os.getenv("AUTOGIT_WORKERS")
+    port = os.getenv("GD_PORT")
+    workers = os.getenv("GD_WORKERS")
 
     supervisor = Supervisor(
         supervisor_config="/etc/supervisord.conf",
