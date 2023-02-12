@@ -1,5 +1,3 @@
-This project is used to allow Flask apps to be auto updated via git webhook. 
+DO NOT CLONE, ACTIVE REFACTORING IN PROGRESS!
 
-ONLY RUN UNDER DOCKER: Made for the Alpine Docker Environment
-
-
+![](https://media.tenor.com/images/56c9ac6ef5dfb92072b084fd96d1b226/tenor.gif)
