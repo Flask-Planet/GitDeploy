@@ -1,0 +1,22 @@
+{% extends 'theme/extends/main.html' %}
+
+{% block container %}
+    <div x-data="{
+            scrollToBottom(ele) {
+                ele.scrollTop = ele.scrollHeight;
+            }
+         }"
+    >
+        <div class="box">
+            <p><strong>App logs
+                ( <a href="{{ url_for('www.logs', clear=True) }}">Clear Logs</a> )
+            </strong></p>
+            <div class="scroll-box" x-init="scrollToBottom($el)">
+                {% for log in gitdeploy_logs %}
+                    <pre style="margin: 0"><code>{{ log }}</code></pre>
+                    {% if loop.last %}<input type="hidden" autofocus>{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock container %}

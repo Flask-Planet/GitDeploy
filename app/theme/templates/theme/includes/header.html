@@ -1,0 +1,14 @@
+<section style="display: flex; justify-content: space-between" class="mt-4 mb-4">
+    <div class="p-2">
+        <p style="margin: 0; font-weight: bold; color: #ababab">GitDeploy-Flask</p>
+    </div>
+    {% if staging %}{% else %}
+        <div>
+            <a href="{{ url_for('api.reset_tokens') }}" class="button me-2">Reset
+                Login Tokens</a>
+            <a href="{{ url_for('www.logs') }}" class="button me-2">Logs</a>
+            <a href="{{ url_for('www.logout') }}" class="button me-2"
+               style="margin-bottom: 5px;">Logout</a>
+        </div>
+    {% endif %}
+</section>

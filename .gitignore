@@ -117,11 +117,11 @@ env.bak/
 venv.bak/
 evn.toml
 
-# Spyder project settings
+# Spyder project conf
 .spyderproject
 .spyproject
 
-# Rope project settings
+# Rope project conf
 .ropeproject
 
 # mkdocs documentation
@@ -136,3 +136,6 @@ dmypy.json
 .pyre/
 /old/
 /app_old/
+/_old/
+/supervisor/
+/conf/
