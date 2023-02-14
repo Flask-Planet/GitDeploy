@@ -32,6 +32,9 @@ It has webhooks support for github and gitlab, the end goal is to have Heroku st
 - Create a pull request
 - Wait for review
 
+If you are a beginner, you can also check out 
+[this guide](https://opensource.com/article/19/7/create-pull-request-github)
+
 You can also join the [discord server](https://discord.gg/nZkQECDU) to discuss the project.
 
 ## Local setup
