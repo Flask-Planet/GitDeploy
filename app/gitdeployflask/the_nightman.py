@@ -1,4 +1,4 @@
-"""enemy of the day man"""
+"""fighter of the dayman"""
 
 import threading
 import time
