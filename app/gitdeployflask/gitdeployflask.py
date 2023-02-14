@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import typing as t
 from pathlib import Path
 
@@ -20,6 +21,12 @@ def _process_os_release(stout):
         if "VERSION_ID" in line:
             value = line.replace('"', '').split("=")[1]
             version = value
+        if "ProductName" in line:
+            value = line.replace('\t', '').split(":")[1]
+            distro = value.lower()
+        if "ProductVersion" in line:
+            value = line.replace('\t', '').split(":")[1]
+            version = value.lower()
 
     return distro, version
 
@@ -72,6 +79,22 @@ class GitDeployFlask:
 
         def __str__(self):
             return f"{self.distro} {self.version}"
+    
+    class MacosEnv:
+        distro = "MacOS"
+        version: str
+        package_manager = "brew"
+        user: str
+
+        def __init__(self, version: str):
+            self.version = version
+            self.user = os.getlogin()
+
+        def __repr__(self):
+            return f"<MacosEnv {self.distro} {self.version}>"
+
+        def __str__(self):
+            return f"{self.distro} {self.version}"
 
     env: t.Optional[t.Union[DebianEnv, UbuntuEnv, AlpineEnv]] = None
     root_dir: Path = Path.cwd()
@@ -111,10 +134,16 @@ class GitDeployFlask:
         compatible_os = {
             "debian": ["10", "11"],
             "ubuntu": ["18.04", "20.04", "22.04", "22.10", "23.04"],
-            "alpine": ["3.14", "3.15", "3.16", "3.17"]
+            "alpine": ["3.14", "3.15", "3.16", "3.17"],
+            "macos": ["12.6.3"],
         }
-        with Terminator("cat") as command:
-            stout, sterr = command("/etc/os-release")
+
+        base_cmd = None if sys.platform == 'darwin' else "cat"
+        command_name = "sw_vers" if sys.platform == 'darwin' else "/etc/os-release"
+        without_base = True if sys.platform == 'darwin' else False
+
+        with Terminator(base_cmd) as command:
+            stout, sterr = command(command_name, without_base)
             if sterr:
                 raise Exception(
                     f"Info on checking operating system: {sterr}"
