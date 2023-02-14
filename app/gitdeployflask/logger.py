@@ -6,7 +6,10 @@ from typing import Union, Optional
 class Logger:
     log_file_path: Path
 
-    def __init__(self, log_file_path: Path):
+    def __init__(self):
+        pass
+
+    def init_log_file(self, log_file_path: Path):
         self.log_file_path = log_file_path
         if not self.log_file_path.exists():
             self.log_file_path.touch(exist_ok=True)

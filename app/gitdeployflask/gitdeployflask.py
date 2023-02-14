@@ -101,7 +101,7 @@ class GitDeployFlask:
 
     dummy_command = "echo 'Waiting for command to be set...'"
 
-    logger = Logger(log_file)
+    logger = Logger()
 
     def __init__(self):
         self._check_env()
@@ -170,6 +170,7 @@ class GitDeployFlask:
                 )
 
         self.read_conf()
+        self.logger.init_log_file(self.log_file)
 
         if not self.satellite_ini.exists():
             self.write_satellite_ini()
@@ -178,11 +179,12 @@ class GitDeployFlask:
 
     def _parse_command(self) -> str:
         command = "echo 'Waiting for command to be set...'"
-        os.listdir(self.repo_venv_bin)
-        if self.conf.get("COMMAND"):
-            start_command = self.conf.get("COMMAND").split(" ")[0]
-            if start_command in os.listdir(self.repo_venv_bin):
-                command = f"venv/bin/{self.conf.get('COMMAND')}"
+        if self.repo_venv_bin.exists():
+            os.listdir(self.repo_venv_bin)
+            if self.conf.get("COMMAND"):
+                start_command = self.conf.get("COMMAND").split(" ")[0]
+                if start_command in os.listdir(self.repo_venv_bin):
+                    command = f"venv/bin/{self.conf.get('COMMAND')}"
         return command
 
     def _remove_cwd(self, path: Path) -> str:
