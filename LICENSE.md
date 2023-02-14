@@ -1,19 +1,3 @@
-    GitDeploy is Copyright (C)(2023) of UiliX(R) Ltd T/A Flask-Planet
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
 GNU GENERAL PUBLIC LICENSE
 ==========================
 
@@ -557,3 +541,21 @@ connection with the Program, unless a warranty or assumption of liability accomp
 a copy of the Program in return for a fee.
 
 END OF TERMS AND CONDITIONS
+
+### Summary statement if used in a commercial, or private, product.
+You must include this statement in any product or service you provide that uses this software.
+
+    GitDeploy is Copyright (C)(2023) of UiliX(R) Ltd T/A Flask-Planet
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
