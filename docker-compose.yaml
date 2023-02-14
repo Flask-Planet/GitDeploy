@@ -1,7 +1,7 @@
 services:
   web:
     container_name: website_here
-    image: flaskplanet/GitDeploy-Flask
+    image: cheesecake87/autogit-flask
     ports:
       - "5000" # The port the flask app is running on
       - "5500" # The port that AutoGit is running on
