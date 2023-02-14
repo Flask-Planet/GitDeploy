@@ -9,6 +9,7 @@ It has webhooks support for github and gitlab, the end goal is to have Heroku st
 ## Contributors wanted!
 
 - Free to add your own ideas!
+- Beginners are welcome and encouraged to join in!
 
 ### TODO:
 
