@@ -8,5 +8,5 @@ from .. import bp
 @security.login_required('www.login', 'logged_in')
 def manual_destroy():
     gitdeploy.stop_satellite()
-    gitdeploy.destory_repo()
+    gitdeploy.destroy_repo()
     return redirect(url_for("www.dashboard"))

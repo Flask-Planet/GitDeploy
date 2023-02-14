@@ -5,7 +5,7 @@ from .. import bp
 
 
 @bp.route('/login', methods=["GET", "POST"])
-@security.no_login_required('www.dashboard', 'logged_in')
+@security.no_login_required('www.dashboard', 'logged_in', show_message=False)
 def login():
     gitdeploy.read_conf()
     if gitdeploy.conf.get("FIRST_RUN"):

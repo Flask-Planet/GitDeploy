@@ -9,7 +9,7 @@ from .. import bp
 @bp.route('/settings', methods=["GET", "POST"])
 @security.login_required('www.login', 'logged_in')
 def settings_app():
-    settings = gitdeploy.read_conf()
+    gitdeploy.read_conf()
 
     if request.method == "POST":
         gitdeploy.set_conf("GIT_URL", request.form.get("git_url"))
@@ -45,4 +45,4 @@ def settings_app():
     else:
         repo_exists = False
 
-    return render_template(bp.tmpl("settings.html"), settings=settings, repo_exists=repo_exists)
+    return render_template(bp.tmpl("settings.html"), settings=gitdeploy.conf, repo_exists=repo_exists)

@@ -47,9 +47,9 @@ class Resources:
 
     @staticmethod
     def generate_supervisor_conf(
-            supervisor_dir: Path,
-            log_dir: Path,
-            conf_dir: Path
+            supervisor_dir: str,
+            log_dir: str,
+            conf_dir: str
     ):
         return """
 [unix_http_server]
@@ -79,6 +79,7 @@ files = {conf_dir}/*.ini""".strip().format(**locals())
     def generate_satellite_ini(
             app: str,
             command: str,
+            user: str,
             autostart: bool,
             autorestart: bool,
             log_location: Path,
@@ -88,7 +89,7 @@ files = {conf_dir}/*.ini""".strip().format(**locals())
 [program:{app}]
 directory={working_directory}
 command={command}
-user=root
+user={user}
 autostart={autostart}
 autorestart={autorestart}
 stdout_logfile={log_location}

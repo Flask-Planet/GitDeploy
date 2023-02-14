@@ -8,7 +8,7 @@ from .. import bp
 @security.login_required('www.login', 'logged_in')
 def manual_clone():
     gitdeploy.read_conf()
-    if gitdeploy.conf["GIT"]:
+    if gitdeploy.conf.get("GIT_URL"):
         if gitdeploy.repo_git_file.exists():
             flash("Git repository already exists. Destroy it first.")
             return redirect(url_for("www.dashboard"))

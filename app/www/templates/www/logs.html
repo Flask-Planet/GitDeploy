@@ -8,15 +8,22 @@
          }"
     >
         <div class="box">
+        <p><a href="{{ url_for('www.index') }}">Back</a></p>
             <p><strong>App logs
                 ( <a href="{{ url_for('www.logs', clear=True) }}">Clear Logs</a> )
             </strong></p>
-            <div class="scroll-box" x-init="scrollToBottom($el)">
-                {% for log in gitdeploy_logs %}
-                    <pre style="margin: 0"><code>{{ log }}</code></pre>
-                    {% if loop.last %}<input type="hidden" autofocus>{% endif %}
-                {% endfor %}
-            </div>
+            {% if gitdeploy_logs %}
+                <div class="scroll-box" x-init="scrollToBottom($el)">
+                    {% for log in gitdeploy_logs %}
+                        <div class="false_pre">{{ log }}</div>
+                        {% if loop.last %}<input type="hidden" autofocus>{% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="scroll-box" x-init="scrollToBottom($el)">
+                    <div class="false_pre">No Logs</div>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock container %}

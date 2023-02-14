@@ -2,6 +2,7 @@
 
 import threading
 import time
+from pathlib import Path
 
 from .terminator import Terminator
 
@@ -16,8 +17,7 @@ class BackgroundTasks(threading.Thread):
         super().__init__()
 
     def run(self, *args, **kwargs):
-        with Terminator() as run:
-            out, err = run("supervisord -c supervisor/supervisord.conf -n")
-            if err:
-                text_log(f"{err}")
-                raise SystemExit("Supervisor failed to start")
+        with Terminator("venv/bin/supervisord", working_directory=Path.cwd()) as run:
+            out, err = run("-c supervisor/supervisord.conf -n")
+            text_log(f"{Path.cwd()}")
+            text_log(f"{out} {err}")

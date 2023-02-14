@@ -600,10 +600,19 @@ input[type='checkbox'], input[type='radio'] {
 
 /* structure.css */
 
+.small-alert {
+    border-radius: 5px;
+    background-color: rgba(211, 52, 255, 0.1);
+    color: whitesmoke;
+    font-weight: bolder;
+    padding: 0.5rem;
+}
+
+
 .alert {
     border-radius: 5px;
     background-color: rgba(211, 52, 255, 0.1);
-    max-width: 63rem;
+    max-width: 51rem;
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -617,7 +626,7 @@ input[type='checkbox'], input[type='radio'] {
 }
 
 section {
-    max-width: 64rem;
+    max-width: 52rem;
     margin: 0 auto;
 }
 
@@ -793,8 +802,9 @@ pre {
     word-wrap: break-word;
     font-size: 86%;
     margin: .8rem .2rem;
-    padding: 1rem 1.5rem;
+    padding: 1rem 1rem;
     background-color: #151921;
+    color: #a9a9a9;
 }
 
 pre > code {

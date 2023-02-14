@@ -8,8 +8,8 @@ from .. import bp
 @security.login_required('www.login', 'logged_in')
 def logs():
     if request.args.get('clear', False):
-        gitdeploy.get_sattelite_log()
+        gitdeploy.clear_logs()
     return render_template(
         bp.tmpl("logs.html"),
-        gitdeploy_logs=gitdeploy.read_gitdeploy_log()
+        gitdeploy_logs=gitdeploy.read_logs()
     )
