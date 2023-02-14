@@ -542,7 +542,7 @@ a copy of the Program in return for a fee.
 
 END OF TERMS AND CONDITIONS
 
-### Summary statement if used in a commercial, or private, product.
+### Summary statement if used in a commercial, or private product.
 You must include this statement in any product or service you provide that uses this software.
 
     GitDeploy is Copyright (C)(2023) of UiliX(R) Ltd T/A Flask-Planet

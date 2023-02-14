@@ -1,5 +1,7 @@
 # GitDeploy
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 GitDeploy is a simple tool to deploy your python projects to a docker container or VPS from a git repository.
 
 It has webhooks support for github and gitlab, the end goal is to have Heroku style functionality.
