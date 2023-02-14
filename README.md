@@ -22,7 +22,7 @@ It has webhooks support for github and gitlab, the end goal is to have Heroku st
 ### Future features:
 
 - [ ] Add support for oauth git login
-- [ ] Add support to launch other types or tasks (not just deploy)
+- [ ] Add support to launch other tasks (not just deploy)
 
 ### How to contribute
 
