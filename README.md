@@ -15,6 +15,8 @@ It has webhooks support for github and gitlab, the end goal is to have Heroku st
 
 ### TODO:
 
+- [ ] Compatibility with macOS (using pathlib)
+- [x] Compatibility with Linux OS (using pathlib)
 - [ ] Compatibility with Windows OS (using pathlib)
 - [ ] Frontend styling (redesign or just make it look better)
 - [ ] Parse errors in a neat way to the frontend
