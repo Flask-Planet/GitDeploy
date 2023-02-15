@@ -96,7 +96,7 @@ class GitDeployFlask:
         def __str__(self):
             return f"{self.distro} {self.version}"
 
-    env: t.Optional[t.Union[DebianEnv, UbuntuEnv, AlpineEnv]] = None
+    env: t.Optional[t.Union[DebianEnv, UbuntuEnv, AlpineEnv, MacosEnv]] = None
     root_dir: Path = Path.cwd()
 
     conf_dir: Path = root_dir / "conf"
