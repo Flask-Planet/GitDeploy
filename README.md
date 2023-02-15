@@ -32,7 +32,6 @@ It has webhooks support for github and gitlab, the end goal is to have Heroku st
 ### How to contribute
 
 - Fork the repository
-- Create a new branch
 - Make your changes
 - Create a pull request
 - Wait for review
