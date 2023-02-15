@@ -13,21 +13,9 @@ It has webhooks support for github and gitlab, the end goal is to have Heroku st
 - Free to add your own ideas!
 - Beginners are welcome and encouraged to join in!
 
-### TODO:
+### Project Board:
 
-- [x] Compatibility with macOS
-- [x] Compatibility with Linux OS
-- [ ] Compatibility with Windows OS
-- [ ] Frontend styling (redesign or just make it look better)
-- [ ] Parse errors in a neat way to the frontend
-- [ ] Add command templates for some common commands
-- [x] Ensure background task manager is working correctly
-- [ ] Overall system testing
-
-### Future features:
-
-- [ ] Add support for oauth git login
-- [ ] Add support to launch other tasks (not just deploy)
+[Click here](https://github.com/orgs/Flask-Planet/projects/1/views/1?layout=table) to see what needs done.
 
 ### How to contribute
 
