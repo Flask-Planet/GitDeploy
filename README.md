@@ -69,6 +69,8 @@ pip install -r requirements.txt
 
 **Windows** (powershell, with enabled scripts)
 
+(Current state of the project will not work 'out of the box' on Windows due to the project requiring git cli, this needs more R&D time. Feel free to take on this task :) )
+
 ```powershell
 python -m venv venv
 ```
