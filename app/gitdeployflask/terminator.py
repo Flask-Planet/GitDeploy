@@ -33,7 +33,7 @@ class Terminator:
 
     def __init__(
             self,
-            base: str = "",
+            base: t.Optional[str] = None,
             working_directory: t.Optional[Path] = None,
             print_output: bool = False
     ):
