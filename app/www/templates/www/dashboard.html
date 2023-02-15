@@ -7,21 +7,18 @@
         </div>
         <div>
             {% if status %}
-                <span class="green">&circledcirc;</span> Running
+                <button class="button button-red u-no-shadow" @click="stop_app()">Stop</button>
+                <button class="button button-blue u-no-shadow" @click="restart_app()">Restart</button>
             {% else %}
-                <span class="red">&circledcirc;</span> Stopped
+                <button class="button button-green u-no-shadow" @click="start_app()">Start</button>
             {% endif %}
-            (
-            {% if status %}
-                <a href="{{ url_for('api.stop_app') }}" @click="$el.innerText = 'Stopping...'">Stop</a> /
-                <a href="{{ url_for('api.restart_app') }}" @click="$el.innerText = 'Restarting...'">Restart</a>
-            {% else %}
-                <a href="{{ url_for('api.start_app') }}" @click="$el.innerText = 'Starting...'">Start</a>
-            {% endif %}
-            )
+
+            <div class="tag-no-shadow" x-ref="git_app_status" x-text="git_app_status"
+                 style="padding: 8px; margin: 0" :class="git_app_status_style"></div>
+            <a class="button button-outline u-no-shadow" href="{{ url_for('www.logs') }}">Logs</a>
         </div>
     </div>
-    <div class="box mb-4" x-data="{show_destroy: false}">
+    <div class="box mb-4">
         <div>
             <p><strong>Git App Settings
                 ( <a href="{{ url_for('www.settings_app') }}">Edit Settings</a> )
@@ -31,13 +28,13 @@
             <strong><p>Git (
                 <a href="{{ url_for('api.manual_pull') }}" @click="$el.innerText = 'Pulling...'">Pull</a> /
                 <a href="{{ url_for('api.manual_clone') }}" @click="$el.innerText = 'Cloning...'">Clone</a> /
-                <a @click="show_destroy = true" style="cursor: pointer;">Destroy</a>
+                <a @click="show_destroy_git = true" style="cursor: pointer;">Destroy</a>
                 )
                 {% if settings.GIT_URL is not none %}
                     {% if settings.GIT_PRIVATE == True %} PRIVATE {% else %} PUBLIC {% endif %}
                 {% endif %}
             </p></strong>
-            <div class="small-alert" x-show="show_destroy" x-cloak>
+            <div class="small-alert" x-show="show_destroy_git" x-cloak>
                 <div style="padding: 10px; display: flex; flex-direction: row; justify-content: space-between; align-items: center">
                     <div>
                         <p style="margin: 0;"><strong>Warning!</strong></p>
@@ -47,7 +44,7 @@
                     <p style="margin: 0; padding: 10px; text-align: center; display: flex;">
                         <a href="{{ url_for('api.manual_destroy') }}" class="button"
                            style="margin-bottom: 0; margin-right: 10px;">Yes</a>
-                        <a href="#" class="button button-outline" @click="show_destroy = false;"
+                        <a href="#" class="button button-outline" @click="show_destroy_git = false;"
                            style="margin: 0">No</a>
                     </p>
                 </div>
@@ -111,7 +108,8 @@
                         (<a href="{{ url_for('api.manual_recreate_venv') }}"
                             @click="$el.innerText = 'Recreating...'">Recreate venv</a>
                         /
-                        <a href="{{ url_for('api.manual_destroy_venv') }}" @click="$el.innerText = 'Destroying...'">Destroy venv</a>
+                        <a href="{{ url_for('api.manual_destroy_venv') }}" @click="$el.innerText = 'Destroying...'">Destroy
+                            venv</a>
                         /
                         <a href="{{ url_for('api.manual_install_req') }}"
                            @click="$el.innerText = 'Installing requirements...'">Install requirements.txt</a> )
@@ -129,32 +127,13 @@
             </p>
 
         </div>
-        <div class="column" x-data="{
-        v:0,
-        packages: {},
-        has_packages: false,
-        init(){
-            do{
-                this.v++;
-                setTimeout(async () => {
-                    fetch('{{ url_for("api.check_packages") }}')
-                        .then(response => response.json())
-                        .then(jsond => {
-                            this.packages = jsond['packages']
-                            if (this.packages.length > 0) {
-                                this.has_packages = true
-                            }
-                        })
-                }, 1000)
-            }while(this.v < 5)
-        }
-        }">
+        <div class="column">
             {% if git_exists %}
                 {% if venv %}
-                    <template x-for="this_package in packages" x-show="packages">
-                        <div class="tag-no-shadow" x-text="this_package"></div>
+                    <template x-for="package_ in packages" x-show="packages">
+                        <div class="tag-no-shadow" x-text="package_"></div>
                     </template>
-                    <div class="small-alert" x-show="!has_packages"> No packages installed</div>
+                    <div class="small-alert" x-show="!packages"> No packages installed</div>
                 {% else %}
                     <div class="small-alert"> No venv created</div>
                 {% endif %}

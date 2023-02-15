@@ -1,44 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <link rel="shortcut icon" href="{{ url_for('theme.static', filename='ico/favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('theme.static', filename='normalize/normalize.css') }}">
     <link rel="stylesheet" href="{{ url_for('theme.static', filename='css/main.css') }}">
-
-    <meta charset="UTF-8">
-    <title>AutoGit - Flask-Planet</title>
-    <script defer src="{{ url_for('theme.static', filename='js/fragmentor.min.js') }}"></script>
+    <script defer src="{{ url_for('theme.static', filename='js/alpine:global:x-data.js') }}"></script>
     <script defer src="{{ url_for('theme.static', filename='js/alpinejs.min.js') }}"></script>
+
+    <title>AutoGit - Flask-Planet</title>
+
 </head>
 <body>
+
 {% include 'theme/includes/header.html' %}
 
-<div x-data>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div x-ref="messages">
-                {% set count = 0 %}
-                {% for message in messages %}
-                    {% set count = count + 1 %}
-                    <div class="alert" x-ref="message_{{ count }}">
-                        <p style="margin: 0" class="p-2">{{ message }}</p>
-                        <button @click="$refs.message_{{ count }}.remove();">Clear</button>
-                    </div>
-                {% endfor %}
-{#                {% if count > 1 %}#}
-{#                    <div style="width: 100%; text-align: center; margin-bottom: 10px;">#}
-{#                        <button @click="$refs.messages.remove();" style="box-shadow: None;">Clear All</button>#}
-{#                    </div>#}
-{#                {% endif %}#}
-            </div>
-        {% endif %}
-    {% endwith %}
-</div>
-<section x-data>
+<section x-data="global">
+    {% include 'theme/includes/flash.html' %}
     {% block container %}
     {% endblock container %}
 </section>
 
 {% include 'theme/includes/footer.html' %}
+
 </body>
 </html>

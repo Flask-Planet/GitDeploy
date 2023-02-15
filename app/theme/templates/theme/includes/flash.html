@@ -1,0 +1,17 @@
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+
+        <div x-ref="messages">
+            {% set count = 0 %}
+            {% for message in messages %}
+                {% set count = count + 1 %}
+
+                <div class="alert" x-ref="message_{{ count }}">
+                    <p style="margin: 0" class="p-2">{{ message }}</p>
+                    <button @click="$refs.message_{{ count }}.remove();">Clear</button>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% endif %}
+{% endwith %}

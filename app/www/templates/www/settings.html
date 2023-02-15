@@ -7,11 +7,7 @@
 {% endif %}
 
 {% block container %}
-    <div class="box"
-         x-data="{
-            show_token: {{ show_token }},
-            }"
-    >
+    <div class="box">
         <div>
             <form name="setup" method="post" style="margin-bottom: 0">
                 {% if repo_exists %}
@@ -22,75 +18,149 @@
                         </p>
                     </div>
 
-                    <label>Git URL <span class="header-link">( {% if settings.GIT_PRIVATE == True %}
-                        PRIVATE{% else %}PUBLIC{% endif %} )</span></label>
-                    <pre style="margin-top: 0"><code>{{ settings.GIT_URL }}</code></pre>
+                    <p><strong>
+                        Git URL
+                        <span class="header-link">( {% if settings.GIT_PRIVATE == True %}
+                            PRIVATE{% else %}PUBLIC{% endif %} )</span>
+                    </strong></p>
+                    <pre style="margin-top: 0">
+                        <code>{{ settings.GIT_URL }}</code>
+                    </pre>
 
-                    <label>Default Branch ( If you have renamed your default branch, you will need to destroy and
-                        re-clone )</label>
-                    <pre style="margin-top: 0"><code>{{ settings.GIT_BRANCH }}</code></pre>
+                    <p><strong>
+                        Default Branch
+                        ( If you have renamed your default branch, you will need to destroy and re-clone )
+                    </strong></p>
+                    <pre style="margin-top: 0">
+                        <code>{{ settings.GIT_BRANCH }}</code>
+                    </pre>
 
-                    <input name="git_url" id="git_url"
-                           value="{{ settings.GIT_URL if settings.GIT_URL is not none }}" type="hidden">
+                    <input
+                            name="git_url"
+                            id="git_url"
+                            value="{{ settings.GIT_URL if settings.GIT_URL is not none }}"
+                            type="hidden"
+                    >
 
-                    <input name="git_branch" id="git_branch"
-                           value="{{ settings.GIT_BRANCH if settings.GIT_BRANCH is not none }}" type="hidden">
+                    <input
+                            name="git_branch"
+                            id="git_branch"
+                            value="{{ settings.GIT_BRANCH if settings.GIT_BRANCH is not none }}"
+                            type="hidden"
+                    >
 
-                    <input name="git_private" id="git_private" type="checkbox" x-on:click="show_token = !show_token"
-                           :checked="show_token">
+                    <input
+                            name="git_private"
+                            id="git_private"
+                            type="checkbox"
+                            x-on:click="show_settings_token = !show_settings_token"
+                            :checked="show_settings_token"
+                    >
                     <label class="label-inline" for="git_private">This repo requires an access token</label>
 
-                    <div x-show="show_token" x-cloak>
+                    <div x-show="show_settings_token" x-cloak>
+
                         <label for="git_username">Token Name</label>
-                        <input name="git_username" id="git_username"
-                               value="{{ settings.GIT_USERNAME if settings.GIT_USERNAME is not none }}"
-                               type="text" class="u-w100"
-                               placeholder="required" :required="show_token">
+                        <input
+                                name="git_username"
+                                id="git_username"
+                                value="{{ settings.GIT_USERNAME if settings.GIT_USERNAME is not none }}"
+                                type="text" class="u-w100"
+                                placeholder="required"
+                                :required="show_settings_token"
+                        >
+
                         <label for="git_password">Token</label>
-                        <input name="git_password" id="git_password" class="u-w100"
-                               value="{{ settings.GIT_PASSWORD if settings.GIT_PASSWORD is not none }}"
-                               type="password"
-                               placeholder="required" :required="show_token">
+                        <input
+                                name="git_password"
+                                id="git_password"
+                                class="u-w100"
+                                value="{{ settings.GIT_PASSWORD if settings.GIT_PASSWORD is not none }}"
+                                type="password"
+                                placeholder="required"
+                                :required="show_settings_token"
+                        >
+
                     </div>
 
                 {% else %}
 
+                    <label for="git_url">
+                        Git URL ( https://github.com/username_or_org/my-repo.git )
+                    </label>
+                    <input
+                            name="git_url"
+                            id="git_url" class="u-w100"
+                            value="{{ settings.GIT_URL if settings.GIT_URL is not none }}"
+                            type="text"
+                            placeholder="required"
+                            required
+                    >
 
-                    <label for="git_url">Git URL ( https://github.com/username_or_org/my-repo.git )</label>
-
-                    <input name="git_url" id="git_url" class="u-w100"
-                           value="{{ settings.GIT_URL if settings.GIT_URL is not none }}" type="text"
-                           placeholder="required" required>
-
-                    <input name="git_private" id="git_private"
-                           type="checkbox" x-on:click="show_token = !show_token"
-                           :checked="show_token">
-
+                    <input
+                            name="git_private"
+                            id="git_private"
+                            type="checkbox"
+                            x-on:click="show_settings_token = !show_settings_token"
+                            :checked="show_settings_token"
+                    >
                     <label class="label-inline" for="git_private">This repo requires an access token</label>
 
-                    <div x-show="show_token" x-cloak>
-                        <label for="git_username">Token Name</label>
-                        <input name="git_username" id="git_username" class="u-w100"
-                               value="{{ settings.GIT_USERNAME if settings.GIT_USERNAME is not none }}" type="text"
-                               placeholder="required" :required="show_token">
-                        <label for="git_password">Token</label>
-                        <input name="git_password" id="git_password" class="u-w100"
-                               value="{{ settings.GIT_PASSWORD if settings.GIT_PASSWORD is not none }}"
-                               type="password"
-                               placeholder="required" :required="show_token">
+                    <div x-show="show_settings_token" x-cloak>
+                        <label for="git_username">
+                            Token Name
+                        </label>
+                        <input
+                                name="git_username"
+                                id="git_username"
+                                class="u-w100"
+                                value="{{ settings.GIT_USERNAME if settings.GIT_USERNAME is not none }}"
+                                type="text"
+                                placeholder="required"
+                                :required="show_settings_token"
+                        >
+                        <label for="git_password">
+                            Token
+                        </label>
+                        <input
+                                name="git_password"
+                                id="git_password"
+                                class="u-w100"
+                                value="{{ settings.GIT_PASSWORD if settings.GIT_PASSWORD is not none }}"
+                                type="password"
+                                placeholder="required"
+                                :required="show_settings_token"
+                        >
                     </div>
 
                 {% endif %}
 
-                <label for="command">Command</label>
-                <input name="command" id="command" value="{{ settings.COMMAND if settings.COMMAND is not none }}"
-                       type="text" class="u-w100">
-                <label for="wh_secret">Webhook Secret</label>
-                <textarea style="height: 100px;" name="wh_secret" id="wh_secret">{{ settings.WH_SECRET }}</textarea>
+                <label for="command">
+                    Command
+                </label>
+                <input
+                        name="command"
+                        id="command"
+                        value="{{ settings.COMMAND if settings.COMMAND is not none }}"
+                        type="text"
+                        class="u-w100"
+                >
+
+                <label for="wh_secret">
+                    Webhook Secret
+                </label>
+                <textarea
+                        style="height: 100px;"
+                        name="wh_secret"
+                        id="wh_secret"
+                >{{ settings.WH_SECRET }}</textarea>
+
                 <div style="display: flex; justify-content: space-between;">
-                    <a href="{{ url_for('www.dashboard') }}" class="button button-outline" style="margin-bottom: 0;">Cancel</a>
+                    <a href="{{ url_for('www.dashboard') }}"
+                       class="button button-outline" style="margin-bottom: 0;">Cancel</a>
                     <button type="submit">Save</button>
                 </div>
+
             </form>
         </div>
     </div>
