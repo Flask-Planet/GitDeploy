@@ -4,8 +4,7 @@
     </div>
     {% if staging %}{% else %}
         <div>
-            <a href="{{ url_for('api.reset_tokens') }}" class="button me-2">Reset
-                Login Tokens</a>
+            <a class="button me-2" href="{{ url_for('www.settings_app') }}">Edit Settings</a>
             <a href="{{ url_for('www.logout') }}" class="button me-2"
                style="margin-bottom: 5px;">Logout</a>
         </div>

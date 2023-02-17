@@ -35,6 +35,7 @@ input[type='submit'] {
     font-size: 0.8rem !important;
     cursor: pointer;
     border-radius: .2rem;
+    display: inline-block;
 }
 
 .button:hover,
@@ -421,31 +422,71 @@ input[type='checkbox'], input[type='radio'] {
 }
 
 
+.m-0 {
+    padding: 0!important;
+}
+
+.m-1 {
+    padding: 0.25rem!important;
+}
+
+.m-2 {
+    padding: 0.5rem!important;
+}
+
+.m-3 {
+    padding: 1rem!important;
+}
+
+.m-4 {
+    padding: 1.5rem !important;
+}
+
+.m-5 {
+    padding: 3rem;
+}
+
+
 .p-0 {
-    padding: 0;
+    padding: 0!important;
 }
 
 .p-1 {
-    padding: 0.25rem;
+    padding: 0.25rem!important;
 }
 
 .p-2 {
-    padding: 0.5rem;
+    padding: 0.5rem!important;
 }
 
 .p-3 {
-    padding: 1rem;
+    padding: 1rem!important;
 }
 
 .p-4 {
-    padding: 1.5rem;
+    padding: 1.5rem !important;
 }
 
 .p-5 {
     padding: 3rem;
 }
 
-.pb-0 {
+.ptb-0 {
+    padding-top: 0!important;
+    padding-bottom: 0!important;
+}
+
+.ptb-1 {
+    padding-top: 0.25rem!important;
+    padding-bottom: 0.25rem!important;
+}
+
+.ptb-2 {
+    padding-top: 0.5rem!important;
+    padding-bottom: 0.5rem!important;
+}
+
+.pb-2 {
     padding-bottom: 0;
 }
 
@@ -653,6 +694,16 @@ section > :is(h1, h2, h3, h4, h5, h6) {
     color: #a9a9a9;
 }
 
+footer {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: whitesmoke;
+}
+
 @media (min-width: 64rem) {
     .box {
         margin: 0;
@@ -722,13 +773,13 @@ thead * th {
     color: rgba(225, 225, 225, 0.6) !important;
 }
 
-
 b, strong {
     font-weight: bold
 }
 
 p {
-    margin-top: 0
+    margin-top: 0;
+    margin-bottom: 0.4rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -802,17 +853,20 @@ h6 {
 
 .u-styled-green {
     border: 1px solid #135707;
-    color: rgba(206, 206, 206, 0.6)
+    color: rgba(206, 206, 206, 0.6);
+    border-radius: 5px;
 }
 
 .u-styled-red {
     border: 1px solid #6c0909;
-    color: rgba(206, 206, 206, 0.6)
+    color: rgba(206, 206, 206, 0.6);
+    border-radius: 5px;
 }
 
 .u-styled-blue {
     border: 1px solid #08195b;
-    color: rgba(206, 206, 206, 0.6)
+    color: rgba(206, 206, 206, 0.6);
+    border-radius: 5px;
 }
 
 .u-clearfix:after {

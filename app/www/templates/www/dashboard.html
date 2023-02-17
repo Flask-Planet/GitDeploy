@@ -2,55 +2,42 @@
 
 {% block container %}
     <div class="box mb-4">
-        <div>
-            <p><strong>Git App Status</strong></p>
+        <div class="small-alert" x-show="show_destroy_git" x-cloak>
+            <div style="padding: 10px; display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                <div>
+                    <p style="margin: 0;"><strong>Warning!</strong></p>
+                    <p style="margin: 0;">This will destroy the git repository and all files will be lost. </p>
+                    <p style="margin: 0;">Are you sure you want to continue?</p>
+                </div>
+                <p style="margin: 0; padding: 10px; text-align: center; display: flex;">
+                    <a href="{{ url_for('api.manual_destroy') }}" class="button"
+                       style="margin-bottom: 0; margin-right: 10px;">Yes</a>
+                    <a href="#" class="button button-outline" @click="show_destroy_git = false;"
+                       style="margin: 0">No</a>
+                </p>
+            </div>
         </div>
         <div>
-            {% if status %}
-                <button class="button button-red u-no-shadow" @click="stop_app()">Stop</button>
-                <button class="button button-blue u-no-shadow" @click="restart_app()">Restart</button>
-            {% else %}
-                <button class="button button-green u-no-shadow" @click="start_app()">Start</button>
-            {% endif %}
+            <p>
+                <strong>
+                    Git
+                </strong>
+            </p>
+            <div class="false_pre">{{ settings.GIT_URL }}</div>
 
-            <div class="tag-no-shadow" x-ref="git_app_status" x-text="git_app_status"
-                 style="padding: 8px; margin: 0" :class="git_app_status_style"></div>
-            <a class="button button-outline u-no-shadow" href="{{ url_for('www.logs') }}">Logs</a>
+            <div style="display: flex; justify-content: space-between">
+                <div>
+                    <button class="button u-no-shadow" @click="clone_repo()">Clone</button>
+                    <button class="button u-no-shadow" @click="pull_repo()">Pull Changes</button>
+                    <button class="button button-red u-no-shadow" @click="destroy_repo()">Destroy</button>
+
+                </div>
+            </div>
+
         </div>
     </div>
     <div class="box mb-4">
-        <div>
-            <p><strong>Git App Settings
-                ( <a href="{{ url_for('www.settings_app') }}">Edit Settings</a> )
-            </strong></p>
-        </div>
-        <div>
-            <strong><p>Git (
-                <a href="{{ url_for('api.manual_pull') }}" @click="$el.innerText = 'Pulling...'">Pull</a> /
-                <a href="{{ url_for('api.manual_clone') }}" @click="$el.innerText = 'Cloning...'">Clone</a> /
-                <a @click="show_destroy_git = true" style="cursor: pointer;">Destroy</a>
-                )
-                {% if settings.GIT_URL is not none %}
-                    {% if settings.GIT_PRIVATE == True %} PRIVATE {% else %} PUBLIC {% endif %}
-                {% endif %}
-            </p></strong>
-            <div class="small-alert" x-show="show_destroy_git" x-cloak>
-                <div style="padding: 10px; display: flex; flex-direction: row; justify-content: space-between; align-items: center">
-                    <div>
-                        <p style="margin: 0;"><strong>Warning!</strong></p>
-                        <p style="margin: 0;">This will destroy the git repository and all files will be lost. </p>
-                        <p style="margin: 0;">Are you sure you want to continue?</p>
-                    </div>
-                    <p style="margin: 0; padding: 10px; text-align: center; display: flex;">
-                        <a href="{{ url_for('api.manual_destroy') }}" class="button"
-                           style="margin-bottom: 0; margin-right: 10px;">Yes</a>
-                        <a href="#" class="button button-outline" @click="show_destroy_git = false;"
-                           style="margin: 0">No</a>
-                    </p>
-                </div>
-            </div>
-            <div class="false_pre">{{ settings.GIT_URL }}</div>
-        </div>
+
         <div>
 
             <p>
@@ -59,87 +46,67 @@
                 </strong>
             </p>
 
-            <div class="false_pre">{{ settings.COMMAND }}</div>
-            </pre>
-        </div>
-        <div>
+            <div class="false_pre ptb-2" style="display: flex; justify-content: space-between; align-items: center">
+                <span>
+                    {{ settings.COMMAND }}
+                </span>
 
-            <p>
-                <strong>Webhook (
-                    {% if settings.WH_ENABLED %}
-                        <a href="{{ url_for('api.disable_webhook') }}">Disable</a>
-                    {% else %}
-                        <a href="{{ url_for('api.enable_webhook') }}">Enable</a>
-                    {% endif %}
-                    )
-                    {% if settings.WH_ENABLED %}
-                        ENABLED
-                    {% else %}
-                        DISABLED
-                    {% endif %}
-                </strong>
-            </p>
+                <div class="tag-no-shadow" x-ref="git_app_status" x-text="git_app_status"
+                     style="padding: 8px; margin: 0" :class="git_app_status_style"></div>
+            </div>
 
-            <p style="margin-bottom: 8px; font-style: italic;">Secret <a
-                    href="{{ url_for('api.generate_new_secret') }}">Generate New Secret</a></p>
-            <div class="false_pre">{{ settings.WH_SECRET }}</div>
-            <p style="margin-bottom: 8px; margin-top: 5px">/api/webhook/[Webhook Secret] - Listening to default
-                branch</p>
+            <div>
+
+                {% if status %}
+                    <button class="button button-red u-no-shadow" @click="stop_app()">Stop</button>
+                    <button class="button button-blue u-no-shadow" @click="restart_app()">Restart</button>
+                {% else %}
+                    <button class="button button-green u-no-shadow" @click="start_app()">Start</button>
+                {% endif %}
+
+                <a class="button button-outline u-no-shadow" href="{{ url_for('www.logs') }}">Logs</a>
+
+            </div>
 
         </div>
+
     </div>
 
+
+
+
     <div class="box  mb-4">
-        <p><strong>Repo Folder Files</strong></p>
-        <div class="mb-4">
+        <p><strong>Environment</strong></p>
+        <div class="mb-3">
+            {% if git_exists %}
+                <button class="button button-green u-no-shadow" @click="create_venv()">Create Virtual Environment
+                </button>
+            {% else %}
+                <button class="button button-green u-no-shadow" disabled>Create Virtual Environment</button>
+            {% endif %}
+        </div>
+
+        <p>Repository folder contents</p>
+        <div class="mb-3">
             {% if repo_folder %}
                 {% for ld in repo_folder %}
                     <span class="tag-no-shadow"> {{ ld }} </span>
                 {% endfor %}
             {% else %}
-                No files in repo folder
+                <div class="small-alert">No files in repository folder.</div>
             {% endif %}
         </div>
+
+        <p>Installed Packages</p>
+
         <div>
-
-            <p><strong>Installed Packages
-                {% if git_exists %}
-                    {% if venv %}
-                        (<a href="{{ url_for('api.manual_recreate_venv') }}"
-                            @click="$el.innerText = 'Recreating...'">Recreate venv</a>
-                        /
-                        <a href="{{ url_for('api.manual_destroy_venv') }}" @click="$el.innerText = 'Destroying...'">Destroy
-                            venv</a>
-                        /
-                        <a href="{{ url_for('api.manual_install_req') }}"
-                           @click="$el.innerText = 'Installing requirements...'">Install requirements.txt</a> )
-                    {% else %}
-                        ( No venv found
-                        <a href="{{ url_for('api.manual_create_venv') }}" @click="$el.innerText = 'Creating...'">Create
-                            venv</a>
-                        or clone repo.
-                        )
-                    {% endif %}
-                {% else %}
-                    ( No git repo found, please clone one first. )
-                {% endif %}
-            </strong>
-            </p>
-
-        </div>
-        <div class="column">
-            {% if git_exists %}
-                {% if venv %}
-                    <template x-for="package_ in packages" x-show="packages">
-                        <div class="tag-no-shadow" x-text="package_"></div>
-                    </template>
-                    <div class="small-alert" x-show="!packages"> No packages installed</div>
-                {% else %}
-                    <div class="small-alert"> No venv created</div>
-                {% endif %}
-
+            {% if venv %}
+                <template x-for="package_ in packages" x-show="packages">
+                    <div class="tag-no-shadow" x-text="package_"></div>
+                </template>
+                <div class="small-alert" x-show="!packages">No packages installed</div>
             {% else %}
-                <div class="small-alert"> No git repo found, please clone one first.</div>
+                <div class="small-alert">No environment found.</div>
             {% endif %}
 
             {% if venv %}
@@ -150,5 +117,33 @@
                 </form>
             {% endif %}
         </div>
+
     </div>
+
+
+{#    <div class="box">#}
+{#        <div>#}
+{#            <p>#}
+{#                <strong>Webhook (#}
+{#                    {% if settings.WH_ENABLED %}#}
+{#                        <a href="{{ url_for('api.disable_webhook') }}">Disable</a>#}
+{#                    {% else %}#}
+{#                        <a href="{{ url_for('api.enable_webhook') }}">Enable</a>#}
+{#                    {% endif %}#}
+{#                    )#}
+{#                    {% if settings.WH_ENABLED %}#}
+{#                        ENABLED#}
+{#                    {% else %}#}
+{#                        DISABLED#}
+{#                    {% endif %}#}
+{#                </strong>#}
+{#            </p>#}
+{##}
+{#            <p style="margin-bottom: 8px; font-style: italic;">Secret <a#}
+{#                    href="{{ url_for('api.generate_new_secret') }}">Generate New Secret</a></p>#}
+{#            <div class="false_pre">{{ settings.WH_SECRET }}</div>#}
+{#            <p style="margin-bottom: 8px; margin-top: 5px">/api/webhook/[Webhook Secret] - Listening to default#}
+{#                branch</p>#}
+{#        </div>#}
+{#    </div>#}
 {% endblock container %}
