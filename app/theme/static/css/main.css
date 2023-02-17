@@ -138,12 +138,12 @@ input[type='submit'].button-clear[disabled]:hover {
 
 .button-green {
     background-color: #135707;
-    border-color: #135707;
+    border-color: #20800e;
 }
 
 .button-green:hover {
     background-color: #1f7710;
-    border-color: #135707;
+    border-color: #20800e;
 }
 
 .button-blue {

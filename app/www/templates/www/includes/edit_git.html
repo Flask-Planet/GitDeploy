@@ -1,0 +1,63 @@
+<form>
+    <label for="git_url">
+        Git
+    </label>
+    <input
+            name="git_url"
+            id="git_url" class="u-w100"
+            value="{{ settings.GIT_URL if settings.GIT_URL is not none }}"
+            type="text"
+            placeholder="https://github.com/username_or_org/my-repo.git"
+            required
+    >
+
+    <input
+            name="git_private"
+            id="git_private"
+            type="checkbox"
+            class="mb-3"
+            x-on:click="show_settings_token = !show_settings_token"
+            :checked="show_settings_token"
+    >
+    <label class="label-inline" for="git_private">This repo requires an access token</label>
+
+    <div x-show="show_settings_token" x-cloak>
+        <label for="git_username">
+            Token Name
+        </label>
+        <input
+                name="git_username"
+                id="git_username"
+                class="u-w100"
+                value="{{ settings.GIT_USERNAME if settings.GIT_USERNAME is not none }}"
+                type="text"
+                placeholder="required"
+                :required="show_settings_token"
+        >
+        <label for="git_password">
+            Token
+        </label>
+        <input
+                name="git_password"
+                id="git_password"
+                class="u-w100"
+                value="{{ settings.GIT_PASSWORD if settings.GIT_PASSWORD is not none }}"
+                type="password"
+                placeholder="required"
+                :required="show_settings_token"
+        >
+    </div>
+
+    <input type="hidden" name="git" value="git">
+
+    <div>
+        <button class="button button-green u-no-shadow">
+            Save
+        </button>
+        <button class="button button-black u-no-shadow"
+                @click="edit_git = false">
+            Cancel
+        </button>
+    </div>
+
+</form>

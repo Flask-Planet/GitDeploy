@@ -1,6 +1,8 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('global', () => (
         {
+            edit_git: false,
+
             model_login_t1: '',
             model_login_t2: '',
 
