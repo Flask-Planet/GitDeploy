@@ -20,6 +20,12 @@ a:focus, a:hover {
 
 /* buttons.css */
 
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .button,
 button,
 input[type='button'],
@@ -122,7 +128,12 @@ input[type='submit'].button-clear[disabled]:hover {
 
 .button-black {
     background-color: black;
-    border-color: black;
+    border-color: #818181;
+}
+
+.button-black:hover {
+    background-color: #1e1e1e;
+    border-color: #818181;
 }
 
 .button-green {
@@ -137,22 +148,33 @@ input[type='submit'].button-clear[disabled]:hover {
 
 .button-blue {
     background-color: #08195b;
-    border-color: #08195b;
+    border-color: #112a8a;
 }
 
 .button-blue:hover {
     background-color: #132879;
-    border-color: #08195b;
+    border-color: #112a8a;
 }
 
 .button-red {
     background-color: #6c0909;
-    border-color: #6c0909;
+    border-color: #a41d1d;
 }
 
 .button-red:hover {
     background-color: #811a1a;
-    border-color: #6c0909;
+    border-color: #a41d1d;
+}
+
+
+.button-orange {
+    background-color: #b23905;
+    border-color: #d75821;
+}
+
+.button-orange:hover {
+    background-color: #c44108;
+    border-color: #d75821;
 }
 
 .button-black.button-clear,
@@ -423,19 +445,19 @@ input[type='checkbox'], input[type='radio'] {
 
 
 .m-0 {
-    padding: 0!important;
+    padding: 0 !important;
 }
 
 .m-1 {
-    padding: 0.25rem!important;
+    padding: 0.25rem !important;
 }
 
 .m-2 {
-    padding: 0.5rem!important;
+    padding: 0.5rem !important;
 }
 
 .m-3 {
-    padding: 1rem!important;
+    padding: 1rem !important;
 }
 
 .m-4 {
@@ -448,19 +470,19 @@ input[type='checkbox'], input[type='radio'] {
 
 
 .p-0 {
-    padding: 0!important;
+    padding: 0 !important;
 }
 
 .p-1 {
-    padding: 0.25rem!important;
+    padding: 0.25rem !important;
 }
 
 .p-2 {
-    padding: 0.5rem!important;
+    padding: 0.5rem !important;
 }
 
 .p-3 {
-    padding: 1rem!important;
+    padding: 1rem !important;
 }
 
 .p-4 {
@@ -471,19 +493,49 @@ input[type='checkbox'], input[type='radio'] {
     padding: 3rem;
 }
 
+.plr-0 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.plr-1 {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+}
+
+.plr-2 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+}
+
+.plr-3 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+.plr-4 {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+}
+
+.plr-5 {
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+}
+
 .ptb-0 {
-    padding-top: 0!important;
-    padding-bottom: 0!important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 .ptb-1 {
-    padding-top: 0.25rem!important;
-    padding-bottom: 0.25rem!important;
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
 }
 
 .ptb-2 {
-    padding-top: 0.5rem!important;
-    padding-bottom: 0.5rem!important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
 }
 
 .pb-2 {
@@ -901,4 +953,8 @@ h6 {
 
 .u-no-shadow {
     box-shadow: none !important;
+}
+
+.u-no-bold {
+    font-weight: normal!important;
 }
