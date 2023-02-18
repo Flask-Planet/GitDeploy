@@ -2,10 +2,14 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('global', () => (
         {
             init() {
-                this.get_repo_contents()
+                this.poller();
+            },
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
             },
             alerts: [],
             repo_contents: [],
+            continue_polling: true,
 
             edit_git: false,
             edit_command: false,
@@ -16,27 +20,37 @@ document.addEventListener('alpine:init', () => {
 
             model_command: '',
 
-            git_app_status: 'Stopped',
-            git_app_status_style: 'u-styled-red',
+            satellite_status: '...',
+            satellite_status_style: 'u-styled-red',
             show_destroy_git: false,
             packages: {},
-            show_settings_token: false,
 
+            git_is_private: false,
             git_url_exists: false,
             repo_dot_git_config_exists: false,
             venv_exists: false,
             command_exists: false,
 
-            scroll_to_bottom(el) {
-                el.scrollTop = el.scrollHeight;
+            poller() {
+                this.status_();
+                if (this.continue_polling === true) {
+                    this.sleep(5000).then(() => {
+                        this.poller();
+                    });
+                }
             },
-            get_repo_contents() {
-                fetch(`/api/get-repo-contents`, {})
+            status_() {
+                fetch(`/api/status`, {})
                     .then(response => response.json()).then(jsond => {
                     this.repo_contents = jsond.repo_contents;
-                }).catch(error => {
-                    console.log(error);
+                    this.satellite_status = jsond.satellite_status;
+                    this.venv_exists = jsond.venv_exists;
+                }).catch(_ => {
+                    this.continue_polling = false;
                 })
+            },
+            scroll_to_bottom(el) {
+                el.scrollTop = el.scrollHeight;
             },
             clone_repo(el) {
                 this.alerts = []
@@ -44,11 +58,22 @@ document.addEventListener('alpine:init', () => {
                 fetch(`/api/clone-repo`, {})
                     .then(response => response.json()).then(jsond => {
                     this.alerts = jsond.alerts;
-                    if (jsond.success) {
+                    if (jsond.success === true) {
                         this.repo_dot_git_config_exists = true;
-                        this.get_repo_contents();
-                        el.innerText = 'Clone';
+                        this.status_();
                     }
+                    el.innerText = 'Clone';
+                }).catch(error => {
+                    console.log(error);
+                })
+            },
+            pull_repo(el) {
+                this.alerts = []
+                el.innerText = 'Pulling Changes...';
+                fetch(`/api/pull-repo`, {})
+                    .then(response => response.json()).then(jsond => {
+                    this.alerts = jsond.alerts;
+                    el.innerText = 'Pull Changes';
                 }).catch(error => {
                     console.log(error);
                 })
@@ -61,29 +86,53 @@ document.addEventListener('alpine:init', () => {
                     if (jsond.success) {
                         this.show_destroy_git = false;
                         this.repo_dot_git_config_exists = false;
-                        this.get_repo_contents();
+                        this.status_();
                     }
                 }).catch(error => {
                     console.log(error);
                 })
             },
-            app_status() {
-
+            app_start(el) {
+                el.innerText = 'Starting...';
+                fetch(`/api/start`, {})
+                    .then(response => response.json()).then(jsond => {
+                    if (jsond.success === true) {
+                        this.satellite_status = true;
+                    }
+                }).catch(_ => {
+                    this.continue_polling = false;
+                })
+                el.innerText = 'Start';
             },
-            app_start() {
-
+            app_restart(el) {
+                el.innerText = 'Restarting...';
+                fetch(`/api/restart`, {})
+                    .then(response => response.json()).then(jsond => {
+                    if (jsond.success === true) {
+                        this.satellite_status = true;
+                    }
+                }).catch(_ => {
+                    this.continue_polling = false;
+                })
+                el.innerText = 'Restart';
             },
-            app_restart() {
-
+            app_stop(el) {
+                el.innerText = 'Stopping...';
+                fetch(`/api/restart`, {})
+                    .then(response => response.json()).then(jsond => {
+                }).catch(_ => {
+                    this.continue_polling = false;
+                })
+                el.innerText = 'Stop';
             },
-            app_stop() {
-
-            },
-            git_manual_pull() {
-
-            },
-            env_get_packages() {
-
+            create_venv(el) {
+                el.innerText = 'Creating Virtual Environment...';
+                fetch(`/api/create-venv`, {})
+                    .then(response => response.json()).then(jsond => {
+                }).catch(_ => {
+                    this.continue_polling = false;
+                })
+                el.innerText = 'Create Virtual Environment';
             }
         }
     ));

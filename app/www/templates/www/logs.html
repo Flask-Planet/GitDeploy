@@ -2,14 +2,14 @@
 
 {% block container %}
     <div class="box">
-        <p><a href="{{ url_for('www.index') }}">Back</a></p>
+        <p><a href="{{ url_for('www.dashboard') }}">Back</a></p>
         <p><strong>App logs
             ( <a href="{{ url_for('www.logs', clear=True) }}">Clear Logs</a> )
         </strong></p>
         {% if gitdeploy_logs %}
             <div class="scroll-box" x-init="scroll_to_bottom($el)">
                 {% for log in gitdeploy_logs %}
-                    <div class="false_pre">{{ log }}</div>
+                    <div class="false_pre mt-0 mb-1 ptb-2">{{ log }}</div>
                 {% endfor %}
             </div>
         {% else %}

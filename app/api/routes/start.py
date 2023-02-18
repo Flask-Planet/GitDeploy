@@ -1,5 +1,3 @@
-from flask import url_for, redirect, flash
-
 from app.extensions import security, gitdeploy
 from .. import bp
 
@@ -8,8 +6,13 @@ from .. import bp
 @security.login_required('www.login', 'logged_in')
 def start_app():
     gitdeploy.read_conf()
+    response = {"success": False, "alerts": []}
+
     if not gitdeploy.conf.get('COMMAND'):
-        flash('No command set!')
-        return redirect(url_for('www.dashboard'))
+        response['alerts'].append('No command set to start the app.')
+        return response
+
+    gitdeploy.supervisor_update()
     gitdeploy.start_satellite()
-    return redirect(url_for("www.dashboard"))
+    response['success'] = True
+    return response

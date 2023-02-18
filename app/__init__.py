@@ -10,7 +10,6 @@ def create_app():
     bigapp.import_blueprint("api")
     bigapp.import_theme("theme")
 
-    # Background task is disabled for now while testing
-    # background_tasks.start()
+    background_tasks.start()
 
     return app

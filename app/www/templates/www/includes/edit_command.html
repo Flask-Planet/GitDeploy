@@ -1,18 +1,17 @@
-<form>
+<form method="post" action="/save/command">
     <label for="command">
         Command
     </label>
     <input
             name="command"
             id="command"
-            value="{{ settings.COMMAND if settings.COMMAND is not none }}"
+            value="{{ settings.COMMAND }}"
             type="text"
             class="u-w100"
             autocomplete="off"
-            x-model="model_command"
     >
 
-    <input type="hidden" name="git" value="git">
+    <input type="hidden" name="command" value="command">
 
     <div class="button-group">
         <div>

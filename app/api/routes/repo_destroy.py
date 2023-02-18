@@ -4,7 +4,7 @@ from .. import bp
 
 @bp.get('/destroy-repo')
 @security.login_required('www.login', 'logged_in')
-def destroy_repo():
+def repo_destroy():
     gitdeploy.stop_satellite()
     gitdeploy.destroy_repo()
     return {"success": True, "alerts": ["Git repository destroyed successfully"]}

@@ -348,7 +348,7 @@ input[type='checkbox'], input[type='radio'] {
 /* spacing.css */
 
 .mt-0 {
-    margin-top: 0;
+    margin-top: 0!important;
 }
 
 .mt-1 {
@@ -739,11 +739,12 @@ section > :is(h1, h2, h3, h4, h5, h6) {
 .false_pre {
     border-left: 0.3rem solid #9b4dca;
     word-wrap: break-word;
-    font-size: 86%;
+    font-size: 100%;
     margin: .8rem .2rem;
     padding: 1rem 1rem;
     background-color: #151921;
     color: #a9a9a9;
+    line-height: 1.6rem;
 }
 
 footer {

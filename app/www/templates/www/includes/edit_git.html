@@ -5,25 +5,29 @@
     <input
             name="git_url"
             id="git_url" class="u-w100"
-            value="{{ settings.GIT if settings.GIT is not none }}"
+            value="{{ settings.GIT_URL if settings.GIT_URL is not none }}"
             type="text"
             placeholder="https://github.com/username_or_org/my-repo.git"
             required
             :disabled="repo_dot_git_config_exists"
     >
 
-
     <input
             name="git_private"
             id="git_private"
             type="checkbox"
             class="mb-3"
-            x-on:click="show_settings_token = !show_settings_token"
-            :checked="show_settings_token"
+            x-on:click="git_is_private = !git_is_private"
+            :checked="git_is_private"
+            :disabled="repo_dot_git_config_exists"
     >
     <label class="label-inline" for="git_private">This repo requires an access token</label>
 
-    <div x-show="show_settings_token" x-cloak>
+    <div class="small-alert mb-3" x-show="repo_dot_git_config_exists">
+        To change the git url or its private status, you must destroy the repo.
+    </div>
+
+    <div x-show="git_is_private" x-cloak>
         <label for="git_username">
             Token Name
         </label>
@@ -31,7 +35,7 @@
                 name="git_token_name"
                 id="git_token_name"
                 class="u-w100"
-                value="{{ settings.GIT_USERNAME if settings.GIT_USERNAME is not none }}"
+                value="{{ settings.GIT_TOKEN_NAME if settings.GIT_TOKEN_NAME is not none }}"
                 type="text"
                 placeholder="required"
         >
@@ -42,7 +46,7 @@
                 name="git_token"
                 id="git_token"
                 class="u-w100"
-                value="{{ settings.GIT_PASSWORD if settings.GIT_PASSWORD is not none }}"
+                value="{{ settings.GIT_TOKEN if settings.GIT_TOKEN is not none }}"
                 type="password"
                 placeholder="required"
         >

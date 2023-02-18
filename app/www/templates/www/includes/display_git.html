@@ -4,14 +4,14 @@
     </strong>
 </p>
 
-<div class="false_pre">{{ settings.GIT }}</div>
+<div class="false_pre">{{ settings.GIT_URL }}</div>
 <div class="mb-3">
     <button class="button button-blue u-no-shadow" @click="edit_git = true">Edit</button>
     <button class="button u-no-shadow"
             @click="clone_repo($el)"
             :disabled="repo_dot_git_config_exists">Clone
     </button>
-    <button class="button u-no-shadow" @click="pull_repo()" :disabled="!repo_dot_git_config_exists">Pull Changes
+    <button class="button u-no-shadow" @click="pull_repo($el)" :disabled="!repo_dot_git_config_exists">Pull Changes
     </button>
     <button class="button button-red u-no-shadow"
             @click="show_destroy_git = !show_destroy_git"
