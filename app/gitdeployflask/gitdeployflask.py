@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import sys
 import typing as t
 from pathlib import Path
@@ -79,7 +80,7 @@ class GitDeployFlask:
 
         def __str__(self):
             return f"{self.distro} {self.version}"
-    
+
     class MacosEnv:
         distro = "MacOS"
         version: str
@@ -118,8 +119,8 @@ class GitDeployFlask:
     repo_venv_bin: Path = repo_dir / "venv" / "bin"
     repo_python: Path = repo_venv_bin / "python"
     repo_pip: Path = repo_venv_bin / "pip"
-    repo_git_file: Path = repo_dir / ".git"
-    repo_git_config: Path = repo_git_file / "config"
+    repo_dot_git_folder: Path = repo_dir / ".git"
+    repo_dot_git_config: Path = repo_dot_git_folder / "config"
     repo_requirements_file: Path = repo_dir / "requirements.txt"
 
     dummy_command = "echo 'Waiting for command to be set...'"
@@ -219,6 +220,9 @@ class GitDeployFlask:
     def _remove_cwd(self, path: Path) -> str:
         return str(path).replace(str(self.root_dir), "").lstrip("/")
 
+    def get_repo_contents(self) -> t.List[str]:
+        return os.listdir(self.repo_dir)
+
     def supervisor_update(self):
         with Terminator("venv/bin/supervisorctl -c supervisor/supervisord.conf") as ctl:
             o1, e1 = ctl("update")
@@ -251,6 +255,41 @@ class GitDeployFlask:
             else:
                 json.dump(self.conf, conf, indent=4)
 
+    def _write_dot_git_config(self, new_url) -> bool:
+        if self.repo_dot_git_config.exists():
+            with open(self.repo_dot_git_config, "r") as old_config:
+                old_config_ = old_config.read()
+                with open(self.repo_dot_git_config, "w") as new_config:
+                    new_config_ = re.sub(r"(?<=url = ).*", new_url, old_config_)
+                    new_config.write(new_config_)
+        else:
+            return False
+        return True
+
+    def set_dot_git_config_with_token(self) -> bool:
+        git_url = self.conf.get("GIT_URL")
+        token_name = self.conf.get("GIT_TOKEN_NAME")
+        token = self.conf.get("GIT_TOKEN")
+
+        if "http://" in git_url:
+            return False
+        else:
+            new_url = git_url.replace("https://", f"https://{token_name}:{token}@")
+
+        self.set_conf("GIT", new_url)
+        return self._write_dot_git_config(new_url)
+
+    def set_dot_git_config_without_token(self) -> bool:
+        git_url = self.conf.get("GIT_URL")
+
+        if "http://" in git_url:
+            return False
+        else:
+            new_url = git_url
+
+        self.set_conf("GIT", new_url)
+        return self._write_dot_git_config(new_url)
+
     def write_satellite_ini(self):
         with open(self.satellite_ini, "w") as ini:
             ini.write(
@@ -269,18 +308,16 @@ class GitDeployFlask:
     def set_tokens(self):
         self.set_conf("T1", Tools.generate_random_token(24))
         self.set_conf("T2", Tools.generate_random_token(24))
-        self.set_conf("FIRST_RUN", Tools.generate_random_token(24))
+        self.set_conf("FIRST_RUN", False)
         self.write_conf()
 
     def clone_repo(self):
         with Terminator("git") as git:
-            o1, e1 = git(f"clone {self.conf.get('GIT_URL')} {self.repo_dir}")
+            o1, e1 = git(f"clone {self.conf.get('GIT')} {self.repo_dir}")
             o2, e2 = git(f"checkout {self.conf.get('GIT_BRANCH', 'master')}", working_directory=self.repo_dir)
             self.logger.log(f"Cloning repo: {o1}{o2}")
             if e1 or e2:
                 self.logger.log(f"Info on cloning repo: {e1}{e2}")
-                return False
-            return True
 
     def create_venv(self):
         with Terminator("python3") as python:
