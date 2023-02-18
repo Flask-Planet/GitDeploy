@@ -5,17 +5,15 @@ import sys
 import typing as t
 from pathlib import Path
 
-from .logger import Logger
 from .resources import Resources
 from .terminator import Terminator
 from .tools import Tools
 
 
-def _process_os_release(stout):
-    split_output = stout.split("\n")
+def _process_os_release(terminal_output: list):
     distro = None
     version = None
-    for line in split_output:
+    for line in terminal_output:
         if "PRETTY_NAME" in line:
             value = line.replace('"', '').split("=")[1]
             distro = value.split(" ")[0].lower()
@@ -30,6 +28,17 @@ def _process_os_release(stout):
             version = value.lower()
 
     return distro, version
+
+
+def _failed(outputs: t.List[str], fail_on: t.List[str] = None):
+    complete = ""
+    for output in outputs:
+        complete += output
+
+    for fail in fail_on:
+        if fail in complete:
+            return True
+    return False
 
 
 class GitDeployFlask:
@@ -125,8 +134,6 @@ class GitDeployFlask:
 
     dummy_command = "echo 'Waiting for command to be set...'"
 
-    logger = Logger()
-
     def __init__(self):
         self._check_env()
         self._first_run()
@@ -143,14 +150,9 @@ class GitDeployFlask:
         command_name = "sw_vers" if sys.platform == 'darwin' else "/etc/os-release"
         without_base = True if sys.platform == 'darwin' else False
 
-        with Terminator(base_cmd) as command:
-            stout, sterr = command(command_name, without_base)
-            if sterr:
-                raise Exception(
-                    f"Info on checking operating system: {sterr}"
-                )
-
-            distro, version = _process_os_release(stout)
+        with Terminator(base_cmd, log=False) as command:
+            distro, version = _process_os_release(
+                command(command_name, without_base))
 
             if distro not in compatible_os:
                 raise Exception(
@@ -200,7 +202,6 @@ class GitDeployFlask:
                 )
 
         self.read_conf()
-        self.logger.init_log_file(self.log_file)
 
         if not self.satellite_ini.exists():
             self.write_satellite_ini()
@@ -225,15 +226,7 @@ class GitDeployFlask:
 
     def supervisor_update(self):
         with Terminator("venv/bin/supervisorctl -c supervisor/supervisord.conf") as ctl:
-            o1, e1 = ctl("update")
-            self.logger.log(f"Supervisor updated")
-            if e1:
-                self.logger.log(f"Info on updating supervisor: {e1}")
-
-            o1, e1 = ctl("restart all")
-            self.logger.log(f"Supervisor restarted")
-            if e1:
-                self.logger.log(f"Info on restarting supervisor: {e1}")
+            ctl("update")
 
     def set_conf(self, key: str, value: t.Any, write: bool = False):
         if key not in self.conf:
@@ -255,40 +248,29 @@ class GitDeployFlask:
             else:
                 json.dump(self.conf, conf, indent=4)
 
-    def _write_dot_git_config(self, new_url) -> bool:
+    def _write_dot_git_config(self, new_url):
         if self.repo_dot_git_config.exists():
             with open(self.repo_dot_git_config, "r") as old_config:
                 old_config_ = old_config.read()
                 with open(self.repo_dot_git_config, "w") as new_config:
                     new_config_ = re.sub(r"(?<=url = ).*", new_url, old_config_)
                     new_config.write(new_config_)
-        else:
-            return False
-        return True
 
     def set_dot_git_config_with_token(self) -> bool:
         git_url = self.conf.get("GIT_URL")
         token_name = self.conf.get("GIT_TOKEN_NAME")
         token = self.conf.get("GIT_TOKEN")
 
-        if "http://" in git_url:
-            return False
-        else:
-            new_url = git_url.replace("https://", f"https://{token_name}:{token}@")
-
-        self.set_conf("GIT", new_url)
-        return self._write_dot_git_config(new_url)
+        new_git = git_url.replace("https://", f"https://{token_name}:{token}@")
+        self.set_conf("GIT", new_git, write=True)
+        self._write_dot_git_config(new_git)
+        return True
 
     def set_dot_git_config_without_token(self) -> bool:
         git_url = self.conf.get("GIT_URL")
-
-        if "http://" in git_url:
-            return False
-        else:
-            new_url = git_url
-
-        self.set_conf("GIT", new_url)
-        return self._write_dot_git_config(new_url)
+        self.set_conf("GIT", git_url, write=True)
+        self._write_dot_git_config(git_url)
+        return True
 
     def write_satellite_ini(self):
         with open(self.satellite_ini, "w") as ini:
@@ -297,7 +279,7 @@ class GitDeployFlask:
                     app="satellite",
                     command=self._parse_command(),
                     user=self.env.user,
-                    autostart=True,
+                    autostart=False,
                     autorestart=False,
                     log_location=self.log_file,
                     working_directory=self.repo_dir
@@ -312,98 +294,66 @@ class GitDeployFlask:
         self.write_conf()
 
     def clone_repo(self):
-        with Terminator("git") as git:
-            o1, e1 = git(f"clone {self.conf.get('GIT')} {self.repo_dir}")
-            o2, e2 = git(f"checkout {self.conf.get('GIT_BRANCH', 'master')}", working_directory=self.repo_dir)
-            self.logger.log(f"Cloning repo: {o1}{o2}")
-            if e1 or e2:
-                self.logger.log(f"Info on cloning repo: {e1}{e2}")
+        with Terminator("git", type_="pexpect") as git:
+            return git(
+                f"clone {self.conf.get('GIT')} {self.repo_dir}",
+                expects={"Username": None}
+            )
 
     def create_venv(self):
         with Terminator("python3") as python:
-            o1, e1 = python(f"-m venv {self.repo_venv_bin.parent}")
-            self.logger.log(f"Creating venv: {o1}")
-            if e1:
-                self.logger.log(f"Info on creating venv: {e1}")
-                return False
-            return True
+            python(f"-m venv {self.repo_venv_bin.parent}")
 
     def install_requirements(self):
-        with Terminator("venv/bin/pip", working_directory=self.repo_dir) as pip:
-            o1, e1 = pip(f"install -r {self.repo_requirements_file}")
-            self.logger.log(f"Installing requirements: {o1}")
-            if e1:
-                self.logger.log(f"Info on installing requirements: {e1}")
-                return False
-            return True
+        if self.repo_pip.exists():
+            with Terminator("venv/bin/pip", working_directory=self.repo_dir) as pip:
+                pip(f"install -r {self.repo_requirements_file}")
 
     def update_repo(self):
         with Terminator("git") as git:
-            o1, e1 = git("pull", working_directory=self.repo_dir)
-            self.logger.log(f"Updating repo: {o1}")
-            if e1:
-                self.logger.log(f"Info on updating repo: {e1}")
-                return False
-            return True
+            return git("pull", working_directory=self.repo_dir)
 
     def destroy_repo(self):
         with Terminator("rm") as rm:
-            o1, e1 = rm(f"-rf {self.repo_dir}")
+            rm(f"-rf {self.repo_dir}")
             self.repo_dir.mkdir(exist_ok=True)
-            self.logger.log(f"Destroying repo: {o1}")
-            if e1:
-                self.logger.log(f"Info on destroying repo: {e1}")
-                return False
-            return True
 
     def destroy_venv(self):
         with Terminator("rm") as rm:
-            o1, e1 = rm(f"-rf {self.repo_venv_bin.parent}")
-            self.logger.log(f"Destroying venv: {o1}")
-            if e1:
-                self.logger.log(f"Info on destroying venv: {e1}")
-                return False
-            return True
+            rm(f"-rf {self.repo_venv_bin.parent}")
 
     def status_satellite(self):
-        with Terminator("venv/bin/supervisorctl -c supervisor/supervisord.conf") as ctl:
-            o1, e1 = ctl("status satellite")
-            self.logger.log(f"Satellite status: {o1}")
-            if e1:
-                self.logger.log(f"Info on getting satellite status: {e1}")
+        with Terminator(
+                "venv/bin/supervisorctl -c supervisor/supervisord.conf",
+                type_="pexpect_supervisor",
+                log=False
+        ) as ctl:
+            output = ctl("status satellite")
+
+        for line in output:
+            if "FATAL" in line:
                 return False
-            return True
+        return True
 
     def start_satellite(self):
-        with Terminator("venv/bin/supervisorctl -c supervisor/supervisord.conf") as ctl:
-            o1, e1 = ctl("start satellite")
-            self.logger.log(f"Satellite start: {o1}")
-            if e1:
-                self.logger.log(f"Info on starting satellite: {e1}")
-                return False
-            return True
+        if self.conf.get("COMMAND") is not None:
+            with Terminator("venv/bin/supervisorctl -c supervisor/supervisord.conf") as ctl:
+                ctl("start satellite")
 
     def stop_satellite(self):
-        with Terminator("venv/bin/supervisorctl -c supervisor/supervisord.conf") as ctl:
-            o1, e1 = ctl("satellite start")
-            self.logger.log(f"Satellite stop: {o1}")
-            if e1:
-                self.logger.log(f"Info on stopping satellite: {e1}")
-                return False
-            return True
+        if self.conf.get("COMMAND") is not None:
+            with Terminator("venv/bin/supervisorctl -c supervisor/supervisord.conf") as ctl:
+                ctl("stop satellite")
 
     def restart_satellite(self):
-        with Terminator("venv/bin/supervisorctl -c supervisor/supervisord.conf") as ctl:
-            o1, e1 = ctl("restart satellite")
-            self.logger.log(f"Satellite restart: {o1}")
-            if e1:
-                self.logger.log(f"Info on restarting satellite: {e1}")
-                return False
-            return True
+        if self.conf.get("COMMAND") is not None:
+            with Terminator("venv/bin/supervisorctl -c supervisor/supervisord.conf") as ctl:
+                ctl("restart satellite")
 
     def read_logs(self) -> list:
         logs = self.log_file.read_text().split("\n")
         return [x for x in logs if x]
 
     def clear_logs(self):
-        self.logger.clear_log()
+        self.log_file.unlink()
+        self.log_file.touch()
