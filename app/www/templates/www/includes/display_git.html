@@ -4,16 +4,22 @@
     </strong>
 </p>
 
-<div class="false_pre">{{ settings.GIT_URL }}</div>
+<div class="false_pre">{{ settings.GIT }}</div>
 <div class="mb-3">
     <button class="button button-blue u-no-shadow" @click="edit_git = true">Edit</button>
-    <button class="button u-no-shadow" @click="clone_repo()">Clone</button>
-    <button class="button u-no-shadow" @click="pull_repo()">Pull Changes</button>
-    <button class="button button-red u-no-shadow" @click="show_destroy_git = !show_destroy_git">
+    <button class="button u-no-shadow"
+            @click="clone_repo($el)"
+            :disabled="repo_dot_git_config_exists">Clone
+    </button>
+    <button class="button u-no-shadow" @click="pull_repo()" :disabled="!repo_dot_git_config_exists">Pull Changes
+    </button>
+    <button class="button button-red u-no-shadow"
+            @click="show_destroy_git = !show_destroy_git"
+            :disabled="!repo_dot_git_config_exists">
         Destroy
     </button>
 </div>
-<div class="small-alert mt-2" x-show="show_destroy_git" x-cloak x-collapse>
+<div class="small-alert mt-2 mb-3" x-show="show_destroy_git" x-cloak x-collapse>
     <div style="padding: 10px; display: flex; flex-direction: row; justify-content: space-between; align-items: center">
         <div>
             <p class="m-0"><strong>Warning!</strong></p>
@@ -25,19 +31,15 @@
                     @click="show_destroy_git = !show_destroy_git">
                 NO
             </button>
-            <button class="button button-red u-no-shadow" @click="clone_repo()">YES</button>
-
+            <button class="button button-red u-no-shadow" @click="destroy_repo()">YES</button>
         </div>
     </div>
 </div>
 
 <p>Repository folder contents</p>
-<div>
-    {% if repo_folder %}
-        {% for ld in repo_folder %}
-            <span class="tag-no-shadow"> {{ ld }} </span>
-        {% endfor %}
-    {% else %}
-        <div class="small-alert">No files in repository folder.</div>
-    {% endif %}
+<div x-show="repo_contents">
+    <template x-for="item in repo_contents">
+        <span class="tag-no-shadow" x-text="item"></span>
+    </template>
 </div>
+<div class="small-alert" x-show="repo_contents.length === 0">No files in repository folder.</div>

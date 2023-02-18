@@ -4,14 +4,21 @@
         <div x-ref="messages">
             {% set count = 0 %}
             {% for message in messages %}
-                {% set count = count + 1 %}
-
-                <div class="alert" x-ref="message_{{ count }}">
+                <div class="alert">
                     <p style="margin: 0" class="p-2">{{ message }}</p>
-                    <button @click="$refs.message_{{ count }}.remove();">Clear</button>
+                    <button @click="$el.parentElement.remove();">Clear</button>
                 </div>
             {% endfor %}
         </div>
 
     {% endif %}
 {% endwith %}
+
+<div x-show="alerts" x-cloak>
+    <template x-for="alert_ in alerts">
+        <div class="alert">
+            <p style="margin: 0" class="p-2" x-text="alert_"></p>
+            <button @click="$el.parentElement.remove();">Clear</button>
+        </div>
+    </template>
+</div>

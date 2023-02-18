@@ -1,15 +1,17 @@
-<form>
+<form method="post" action="/save/git">
     <label for="git_url">
         Git
     </label>
     <input
             name="git_url"
             id="git_url" class="u-w100"
-            value="{{ settings.GIT_URL if settings.GIT_URL is not none }}"
+            value="{{ settings.GIT if settings.GIT is not none }}"
             type="text"
             placeholder="https://github.com/username_or_org/my-repo.git"
             required
+            :disabled="repo_dot_git_config_exists"
     >
+
 
     <input
             name="git_private"
@@ -26,25 +28,23 @@
             Token Name
         </label>
         <input
-                name="git_username"
-                id="git_username"
+                name="git_token_name"
+                id="git_token_name"
                 class="u-w100"
                 value="{{ settings.GIT_USERNAME if settings.GIT_USERNAME is not none }}"
                 type="text"
                 placeholder="required"
-                :required="show_settings_token"
         >
-        <label for="git_password">
+        <label for="git_token">
             Token
         </label>
         <input
-                name="git_password"
-                id="git_password"
+                name="git_token"
+                id="git_token"
                 class="u-w100"
                 value="{{ settings.GIT_PASSWORD if settings.GIT_PASSWORD is not none }}"
                 type="password"
                 placeholder="required"
-                :required="show_settings_token"
         >
     </div>
 
@@ -54,7 +54,7 @@
         <button class="button button-green u-no-shadow">
             Save
         </button>
-        <button class="button button-black u-no-shadow"
+        <button type="button" class="button button-black u-no-shadow"
                 @click="edit_git = false">
             Cancel
         </button>

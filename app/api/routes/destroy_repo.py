@@ -1,12 +1,10 @@
-from flask import url_for, redirect
-
 from app.extensions import security, gitdeploy
 from .. import bp
 
 
-@bp.get('/manual-destroy')
+@bp.get('/destroy-repo')
 @security.login_required('www.login', 'logged_in')
-def manual_destroy():
+def destroy_repo():
     gitdeploy.stop_satellite()
     gitdeploy.destroy_repo()
-    return redirect(url_for("www.dashboard"))
+    return {"success": True, "alerts": ["Git repository destroyed successfully"]}

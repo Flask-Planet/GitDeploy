@@ -1,0 +1,37 @@
+<form>
+    <label for="command">
+        Command
+    </label>
+    <input
+            name="command"
+            id="command"
+            value="{{ settings.COMMAND if settings.COMMAND is not none }}"
+            type="text"
+            class="u-w100"
+            autocomplete="off"
+            x-model="model_command"
+    >
+
+    <input type="hidden" name="git" value="git">
+
+    <div class="button-group">
+        <div>
+
+            <button type="submit" class="button button-orange u-no-shadow">
+                Save &amp; Start / Restart
+            </button>
+            <button type="submit" class="button button-green u-no-shadow">
+                Save
+            </button>
+            <button type="button" class="button button-black u-no-shadow"
+                    @click="edit_command = false">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+</form>
+
+<div x-show="show_command_templates">
+
+</div>

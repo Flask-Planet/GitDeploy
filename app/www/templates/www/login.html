@@ -1,15 +1,15 @@
-{% extends 'theme/main.html' %}
+{% extends 'theme/extends/main.html' %}
 
 {% block container %}
-    <h4 class="u-center">Login</h4>
-    <form name="login" method="post">
-        <fieldset style="margin-bottom: 0">
-            <label for="t1">Token 1</label>
-            <input id="t1" name="t1" type="password" x-model="model_login_t1">
-            <label for="t2">Token 2</label>
-            <input id="t2" name="t2" type="password" x-model="model_login_t2">
-            <input type="submit" value="login" class="u-w100"
-                   style="margin-bottom: 0; margin-top: 10px;">
-        </fieldset>
-    </form>
+    <section>
+        <div class="box p-4">
+            <form name="tokens" method="post" style="margin-bottom: 0">
+                <label for="t1">Token 1</label>
+                <input id="t1" name="t1" type="password" x-model="model_login_t1" class="u-w100">
+                <label for="t2">Token 2</label>
+                <input id="t2" name="t2" type="password" x-model="model_login_t2" class="u-w100">
+                <input type="submit" value="login" class="u-w100" style="margin-bottom: 0; margin-top: 10px;">
+            </form>
+        </div>
+    </section>
 {% endblock container %}

@@ -10,7 +10,7 @@ def manual_pull():
     gitdeploy.read_conf()
     if gitdeploy.conf.get("GIT"):
 
-        if not gitdeploy.repo_git_file.exists():
+        if not gitdeploy.repo_dot_git_file.exists():
             flash("Git repository not found. Clone it first.")
             return redirect(url_for("www.dashboard"))
 

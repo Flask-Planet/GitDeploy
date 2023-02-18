@@ -40,7 +40,7 @@ def settings_app():
 
         return redirect(url_for("www.dashboard"))
 
-    if gitdeploy.repo_git_file.exists():
+    if gitdeploy.repo_dot_git_file.exists():
         repo_exists = True
     else:
         repo_exists = False

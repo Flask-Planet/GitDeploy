@@ -1,0 +1,24 @@
+<p>
+    <strong>
+        Command
+    </strong>
+</p>
+<div class="false_pre ptb-2 button-group">
+    <span>
+        {{ settings.COMMAND }}
+    </span>
+
+    <div class="tag-no-shadow" x-ref="git_app_status" x-text="git_app_status"
+         style="padding: 8px; margin: 0" :class="git_app_status_style"></div>
+</div>
+
+<div>
+    <button class="button button-blue u-no-shadow" @click="edit_command = true">Edit</button>
+
+    {#                {% if status %}#}
+    <button class="button button-red u-no-shadow" @click="stop_app()">Stop</button>
+    <button class="button button-orange u-no-shadow" @click="restart_app()">Restart</button>
+    {#                {% else %}#}
+    <button class="button button-green u-no-shadow" @click="start_app()">Start</button>
+    {#                {% endif %}#}
+</div>
