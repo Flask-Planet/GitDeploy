@@ -18,6 +18,4 @@ class BackgroundTasks(threading.Thread):
 
     def run(self, *args, **kwargs):
         with Terminator("venv/bin/supervisord", working_directory=Path.cwd()) as run:
-            out, err = run("-c supervisor/supervisord.conf -n")
-            text_log(f"{Path.cwd()}")
-            text_log(f"{out} {err}")
+            run("-c supervisor/supervisord.conf -n")
