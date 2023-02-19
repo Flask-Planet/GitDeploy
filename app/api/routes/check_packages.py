@@ -15,7 +15,7 @@ def remove_spaces(s):
 @bp.get('/check-packages')
 @security.login_required('www.login', 'logged_in')
 def check_packages():
-    if gitdeploy.repo_python.exists():
+    if gitdeploy.env.repo_python.exists():
         with terminator(
                 "venv/bin/pip", working_directory=gitdeploy.repo_dir
         ) as command:
