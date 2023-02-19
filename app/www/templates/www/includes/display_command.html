@@ -8,8 +8,12 @@
         {{ settings.COMMAND }}
     </span>
 
-    <div class="tag-no-shadow" x-ref="satellite_status" x-text="satellite_status"
-         style="padding: 8px; margin: 0" :class="satellite_status_style"></div>
+    <div class="tag-no-shadow u-styled-red" x-show="!satellite_status"
+         style="padding: 8px; margin: 0">Stopped
+    </div>
+    <div class="tag-no-shadow u-styled-green" x-show="satellite_status"
+         style="padding: 8px; margin: 0">Running
+    </div>
 </div>
 
 <div>
@@ -17,17 +21,17 @@
 
     <button class="button button-red u-no-shadow"
             @click="app_stop($el)"
-            :disabled="!command_exists || !venv_exists"
+            :disabled="!command_exists || !venv_exists || !satellite_status"
     >Stop
     </button>
     <button class="button button-orange u-no-shadow"
             @click="app_restart($el)"
-            :disabled="!command_exists || !venv_exists"
+            :disabled="!command_exists || !venv_exists || !satellite_status"
     >Restart
     </button>
     <button class="button button-green u-no-shadow"
             @click="app_start($el)"
-            :disabled="!command_exists || !venv_exists"
+            :disabled="!command_exists || !venv_exists || satellite_status"
     >Start
     </button>
 </div>
