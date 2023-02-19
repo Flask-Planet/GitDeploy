@@ -2,7 +2,10 @@ import os
 from pathlib import Path
 from typing import Union
 
-from .tools import Tools
+try:
+    from tools import Tools
+except ModuleNotFoundError:
+    from gitdeployflask.tools import Tools
 
 
 def _wash_none_env(env: Union[None, str]) -> Union[None, str, bool]:
@@ -48,7 +51,7 @@ class Resources:
     @staticmethod
     def generate_supervisor_conf(
             supervisor_dir: str,
-            log_dir: str,
+            log_file: str,
             conf_dir: str
     ):
         return """
@@ -56,13 +59,13 @@ class Resources:
 file={supervisor_dir}/supervisor.sock
 
 [supervisord]
-logfile={log_dir}/supervisord.log
-logfile_maxbytes=50MB
-logfile_backups=10
+logfile={log_file}
+logfile_maxbytes=10KB
+logfile_backups=0
 loglevel=info
 pidfile={supervisor_dir}/supervisord.pid
-nodaemon=false
-silent=false
+nodaemon=true
+silent=true
 minfds=1024
 minprocs=200
 
@@ -80,8 +83,6 @@ files = {conf_dir}/*.ini""".strip().format(**locals())
             app: str,
             command: str,
             user: str,
-            autostart: bool,
-            autorestart: bool,
             log_location: Path,
             working_directory: Path,
     ) -> str:
@@ -90,8 +91,9 @@ files = {conf_dir}/*.ini""".strip().format(**locals())
 directory={working_directory}
 command={command}
 user={user}
-autostart={autostart}
-autorestart={autorestart}
+autostart=false
+autorestart=false
+startretries=0
 stdout_logfile={log_location}
 stderr_logfile={log_location}
 """.strip().format(**locals())
