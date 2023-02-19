@@ -1,10 +1,9 @@
 from flask_bigapp import BigApp, Security
 
-from ..gitdeployflask import Terminator, GitDeployFlask, Tools, BackgroundTasks
+from gitdeployflask import Terminator, GitDeploy, Tools
 
 bigapp = BigApp()
 security = Security()
-gitdeploy = GitDeployFlask()
-background_tasks = BackgroundTasks()
+gitdeploy = GitDeploy()
 terminator = Terminator
 Tools = Tools
