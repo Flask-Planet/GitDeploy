@@ -8,6 +8,7 @@ def status():
     response = {
         "repo_contents": gitdeploy.get_repo_contents(),
         "satellite_status": gitdeploy.status_satellite(),
-        "venv_exists": gitdeploy.repo_venv_bin.exists(),
+        "venv_exists": gitdeploy.env.repo_venv_bin.exists(),
+        "packages": gitdeploy.check_installed_packages(),
     }
     return response
