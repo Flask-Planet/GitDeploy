@@ -10,7 +10,7 @@ def repo_pull():
 
     if gitdeploy.conf.get("GIT"):
 
-        if not gitdeploy.repo_dot_git_config.exists():
+        if not gitdeploy.env.repo_dot_git_config.exists():
             response["alerts"].append("Git repository does not exist. Clone it first.")
             return response
 
