@@ -8,8 +8,8 @@ def install_req():
     gitdeploy.read_conf()
     response = {"success": False, "alerts": []}
 
-    if gitdeploy.repo_pip.exists():
-        if not gitdeploy.repo_requirements_file.exists():
+    if gitdeploy.env.repo_pip.exists():
+        if not gitdeploy.env.repo_requirements_file.exists():
             response["alerts"].append(
                 "requirements.txt was not found in repo, add this file to the root of your repo and pull.")
             return response
