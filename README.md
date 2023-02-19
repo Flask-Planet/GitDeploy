@@ -33,6 +33,8 @@ You can also join the [discord server](https://discord.gg/nZkQECDU) to discuss t
 
 Clone the repository and install the requirements:
 
+
+
 ```bash
 git clone https://github.com/Flask-Planet/GitDeploy.git
 ```
@@ -40,9 +42,7 @@ git clone https://github.com/Flask-Planet/GitDeploy.git
 ```bash
 cd GitDeploy
 ```
-
-**GNU/Linux:**
-
+**GNU/Linux / macOS:**
 ```bash
 python3 -m venv venv
 ```
@@ -55,18 +55,11 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**Windows** (powershell, with enabled scripts)
-
-(Current state of the project will not work 'out of the box' on Windows due to the project requiring git cli, this needs more R&D time. Feel free to take on this task :) )
-
-```powershell
-python -m venv venv
+( Running gunicorn will pick up the settings in gunicorn.conf.py by default )
+```bash
+gunicorn
 ```
 
-```powershell
-./venv/Scripts/activate
-```
+**Windows:**
 
-```powershell
-pip install -r requirements.txt
-```
+_**Run above in WSL**_
