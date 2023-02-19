@@ -8,7 +8,7 @@ def create_venv():
     gitdeploy.read_conf()
     response = {"success": False, "alerts": []}
 
-    if not gitdeploy.repo_python.exists():
+    if not gitdeploy.env.repo_python.exists():
         gitdeploy.create_venv()
         response["success"] = True
         response["alerts"].append("Venv created.")
