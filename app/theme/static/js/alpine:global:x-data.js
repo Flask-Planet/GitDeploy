@@ -2,6 +2,7 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('global', () => (
         {
             init() {
+                // this.status_();
                 this.poller();
             },
             sleep(ms) {
@@ -23,7 +24,7 @@ document.addEventListener('alpine:init', () => {
             satellite_status: '...',
             satellite_status_style: 'u-styled-red',
             show_destroy_git: false,
-            packages: {},
+            packages: [],
 
             git_is_private: false,
             git_url_exists: false,
@@ -45,6 +46,7 @@ document.addEventListener('alpine:init', () => {
                     this.repo_contents = jsond.repo_contents;
                     this.satellite_status = jsond.satellite_status;
                     this.venv_exists = jsond.venv_exists;
+                    this.packages = jsond.packages;
                 }).catch(_ => {
                     this.continue_polling = false;
                 })
@@ -95,44 +97,79 @@ document.addEventListener('alpine:init', () => {
             app_start(el) {
                 el.innerText = 'Starting...';
                 fetch(`/api/start`, {})
-                    .then(response => response.json()).then(jsond => {
-                    if (jsond.success === true) {
-                        this.satellite_status = true;
-                    }
-                }).catch(_ => {
-                    this.continue_polling = false;
+                    .then(resp => {
+                        if (resp.ok) {
+                            el.innerText = 'Start';
+                            this.status_();
+                        } else {
+                            el.innerText = 'Error!';
+                        }
+                    }).catch(_ => {
                 })
-                el.innerText = 'Start';
             },
             app_restart(el) {
                 el.innerText = 'Restarting...';
                 fetch(`/api/restart`, {})
-                    .then(response => response.json()).then(jsond => {
-                    if (jsond.success === true) {
-                        this.satellite_status = true;
-                    }
-                }).catch(_ => {
-                    this.continue_polling = false;
+                    .then(resp => {
+                        if (resp.ok) {
+                            el.innerText = 'Restart';
+                            this.status_();
+                        } else {
+                            el.innerText = 'Error!';
+                        }
+                    }).catch(_ => {
                 })
-                el.innerText = 'Restart';
             },
             app_stop(el) {
                 el.innerText = 'Stopping...';
-                fetch(`/api/restart`, {})
-                    .then(response => response.json()).then(jsond => {
-                }).catch(_ => {
-                    this.continue_polling = false;
+                fetch(`/api/stop`, {})
+                    .then(resp => {
+                        if (resp.ok) {
+                            el.innerText = 'Stop';
+                            this.status_();
+                        } else {
+                            el.innerText = 'Error!';
+                        }
+                    }).catch(_ => {
+
                 })
-                el.innerText = 'Stop';
             },
             create_venv(el) {
                 el.innerText = 'Creating Virtual Environment...';
                 fetch(`/api/create-venv`, {})
-                    .then(response => response.json()).then(jsond => {
-                }).catch(_ => {
+                    .catch(_ => {
+                        this.continue_polling = false;
+                    })
+                el.innerText = 'Create Virtual Environment';
+            },
+            install_requirements(el) {
+                el.innerText = 'Installing requirements.txt...';
+                fetch(`/api/install-requirements`, {})
+                    .then(resp => {
+                        if (resp.ok) {
+                            el.innerText = 'Install requirements.txt';
+                            this.status_();
+                        } else {
+                            el.innerText = 'Error!';
+                        }
+                    }).catch(error => {
+                    console.log(error);
                     this.continue_polling = false;
                 })
-                el.innerText = 'Create Virtual Environment';
+            },
+            recreate_venv(el) {
+                el.innerText = 'Recreating Virtual Environment...';
+                fetch(`/api/recreate-venv`, {})
+                    .then(resp => {
+                        if (resp.ok) {
+                            el.innerText = 'Recreate Virtual Environment';
+                            this.status_();
+                        } else {
+                            el.innerText = 'Error!';
+                        }
+                    }).catch(_ => {
+                    this.continue_polling = false;
+                })
             }
         }
     ));
