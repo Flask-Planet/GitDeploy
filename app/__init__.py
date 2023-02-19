@@ -1,6 +1,8 @@
 from flask import Flask
 
-from app.extensions import bigapp, background_tasks
+from app.extensions import bigapp, gitdeploy
+
+gitdeploy.init_supervisorctl()
 
 
 def create_app():
@@ -9,7 +11,5 @@ def create_app():
     bigapp.import_blueprint("www")
     bigapp.import_blueprint("api")
     bigapp.import_theme("theme")
-
-    background_tasks.start()
 
     return app
