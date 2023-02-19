@@ -10,7 +10,7 @@ def repo_clone():
 
     if gitdeploy.conf.get("GIT_URL"):
 
-        if gitdeploy.repo_dot_git_config.exists():
+        if gitdeploy.env.repo_dot_git_config.exists():
             response["alerts"].append("Git repository already exists. Destroy it first.")
             return response
 
