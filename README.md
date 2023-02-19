@@ -24,7 +24,7 @@ It has webhooks support for github and gitlab, the end goal is to have Heroku st
 - Create a pull request
 - Wait for review
 
-If you are a beginner, you can also check out 
+If you are a beginner, you can also check out
 [this guide](https://opensource.com/article/19/7/create-pull-request-github)
 
 You can also join the [discord server](https://discord.gg/nZkQECDU) to discuss the project.
@@ -33,8 +33,6 @@ You can also join the [discord server](https://discord.gg/nZkQECDU) to discuss t
 
 Clone the repository and install the requirements:
 
-
-
 ```bash
 git clone https://github.com/Flask-Planet/GitDeploy.git
 ```
@@ -42,7 +40,9 @@ git clone https://github.com/Flask-Planet/GitDeploy.git
 ```bash
 cd GitDeploy
 ```
+
 **GNU/Linux / macOS:**
+
 ```bash
 python3 -m venv venv
 ```
@@ -55,9 +55,8 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-( Running gunicorn will pick up the settings in gunicorn.conf.py by default )
 ```bash
-gunicorn
+python3 gitdeployflask
 ```
 
 **Windows:**
