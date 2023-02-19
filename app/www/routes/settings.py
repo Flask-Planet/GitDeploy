@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from flask import url_for, redirect, request, render_template, flash
 
 from app.extensions import security, gitdeploy
@@ -40,7 +38,7 @@ def settings_app():
 
         return redirect(url_for("www.dashboard"))
 
-    if gitdeploy.repo_dot_git_file.exists():
+    if gitdeploy.env.repo_dot_git_file.exists():
         repo_exists = True
     else:
         repo_exists = False
