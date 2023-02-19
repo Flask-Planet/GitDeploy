@@ -11,7 +11,7 @@ from .. import bp
 def dashboard():
     gitdeploy.read_conf()
 
-    repo_folder = os.listdir(gitdeploy.repo_dir)
+    repo_folder = os.listdir(gitdeploy.env.repo_dir)
     command_exists = False
     venv_exists = False
     repo_dot_git_config_exists = False
@@ -24,21 +24,21 @@ def dashboard():
         "COMMAND": gitdeploy.conf.get("COMMAND"),
     }
 
-    if gitdeploy.repo_dot_git_config.exists():
+    if gitdeploy.env.repo_dot_git_config.exists():
         repo_dot_git_config_exists = True
 
-    if gitdeploy.repo_venv_bin.exists():
+    if gitdeploy.env.repo_venv_bin.exists():
         if gitdeploy.conf.get("COMMAND"):
-            if gitdeploy.conf.get("COMMAND") in os.listdir(gitdeploy.repo_venv_bin):
+            if gitdeploy.conf.get("COMMAND") in os.listdir(gitdeploy.env.repo_venv_bin):
                 command_exists = True
 
-    if gitdeploy.repo_python.exists():
+    if gitdeploy.env.repo_python.exists():
         venv_exists = True
 
     if request.method == 'POST':
         install = request.form.get('install')
         if install:
-            with terminator(f"venv/bin/pip install", working_directory=gitdeploy.repo_dir) as command:
+            with terminator(f"venv/bin/pip install", working_directory=gitdeploy.env.repo_dir) as command:
                 out, err = command(install)
                 flash(out, "success")
                 return redirect(url_for("www.dashboard"))
