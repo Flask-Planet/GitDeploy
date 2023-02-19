@@ -8,7 +8,6 @@ It has webhooks support for github and gitlab, the end goal is to have Heroku st
 
 **Project is still in development, and may not work as intended.**
 
-![](https://raw.githubusercontent.com/Flask-Planet/GitDeploy/master/__assets__/screenshot_0.png)
 
 ## Contributors wanted!
 
@@ -64,3 +63,5 @@ python3 gitdeployflask
 **Windows:**
 
 _**Run above in WSL**_
+
+![](https://raw.githubusercontent.com/Flask-Planet/GitDeploy/master/__assets__/screenshot_0.png)
