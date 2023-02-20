@@ -19,7 +19,7 @@ document.addEventListener('alpine:init', () => {
 
         model_command: '',
 
-        satellite_status: '...',
+        satellite_status: false,
         satellite_status_style: 'u-styled-red',
         show_destroy_git: false,
         packages: [],
@@ -32,6 +32,9 @@ document.addEventListener('alpine:init', () => {
         command_exists: false,
 
         package_name: '',
+        wh_enabled: false,
+
+        wh_secret: '',
 
         poller() {
             this.status_();
@@ -48,6 +51,8 @@ document.addEventListener('alpine:init', () => {
                 this.satellite_status = jsond.satellite_status;
                 this.venv_exists = jsond.venv_exists;
                 this.packages = jsond.packages;
+                this.wh_secret = jsond.wh_secret;
+                this.wh_enabled = jsond.wh_enabled;
                 if (this.packages) {
                     this.has_packages = this.packages.length > 0;
                 }
@@ -198,6 +203,39 @@ document.addEventListener('alpine:init', () => {
                 }).catch(_ => {
                 this.continue_polling = false;
             })
+        },
+        enable_webhook() {
+            fetch(`/api/enable-webhook`, {})
+                .then(response => response.json()).then(jsond => {
+                this.alerts = jsond.alerts;
+                if (jsond.success) {
+                    this.status_();
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        },
+        disable_webhook() {
+            fetch(`/api/disable-webhook`, {})
+                .then(response => response.json()).then(jsond => {
+                this.alerts = jsond.alerts;
+                if (jsond.success) {
+                    this.status_();
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        },
+        generate_new_secret() {
+            fetch(`/api/generate-new-secret`, {})
+                .then(response => response.json()).then(jsond => {
+                this.alerts = jsond.alerts;
+                if (jsond.success) {
+                    this.status_();
+                }
+            }).catch(error => {
+                console.log(error);
+            });
         }
     }));
 });
