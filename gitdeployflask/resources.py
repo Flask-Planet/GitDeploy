@@ -33,13 +33,13 @@ class Resources:
     def generate_default_conf():
         return {
             "GD_SK": _wash_none_env(os.getenv("GD_SK")),
-            "GIT": None,
+            "GIT": '',
             "GIT_BRANCH": os.environ.get("GD_GIT_BRANCH", "master"),
             "GIT_PRIVATE": _wash_bool_env(os.environ.get("GD_GIT_PRIVATE")),
-            "GIT_URL": _wash_none_env(os.getenv("GD_GIT_URL")),
+            "GIT_URL": _wash_none_env(os.getenv("GD_GIT_URL", '')),
             "GIT_TOKEN_NAME": _wash_none_env(os.getenv("GD_GIT_TOKEN_NAME")),
             "GIT_TOKEN": _wash_none_env(os.getenv("GD_GIT_TOKEN")),
-            "COMMAND": _wash_none_env(os.getenv("GD_COMMAND")),
+            "COMMAND": _wash_none_env(os.getenv("GD_COMMAND", '')),
             "APP_STATE": False,
             "WH_ENABLED": _wash_bool_env(os.environ.get("GD_WEBHOOK_ENABLED")),
             "WH_SECRET": os.getenv("GD_WEBHOOK_SECRET", Tools.generate_random_token(64)),
