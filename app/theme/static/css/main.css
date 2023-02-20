@@ -895,12 +895,10 @@ h6 {
 }
 
 .u-red {
-    font-weight: bold;
-    color: red;
+    color: rgba(255, 0, 0, 0.6);
 }
 
 .u-green {
-    font-weight: bold;
     color: green;
 }
 
