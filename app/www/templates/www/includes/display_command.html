@@ -5,7 +5,7 @@
 </p>
 <div class="false_pre ptb-2 button-group">
     <span>
-        {{ settings.COMMAND }}
+        {{ '-' if settings.COMMAND == '' else settings.COMMAND }}
     </span>
 
     <div class="tag-no-shadow u-styled-red" x-show="!satellite_status"
