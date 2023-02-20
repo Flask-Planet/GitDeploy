@@ -6,6 +6,8 @@ from .. import bp
 @security.login_required('www.login', 'logged_in')
 def stop_app():
     response = {"success": False, "alerts": []}
-    gitdeploy.stop_satellite()
+    response['alerts'].append(
+        gitdeploy.stop_satellite()
+    )
     response['success'] = True
     return response

@@ -11,7 +11,8 @@ def restart_app():
     if not gitdeploy.conf.get('COMMAND'):
         response['alerts'].append('No command set to start the app.')
         return response
-
-    gitdeploy.restart_satellite()
+    response['alerts'].append(
+        gitdeploy.restart_satellite()
+    )
     response['success'] = True
     return response

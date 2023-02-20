@@ -12,7 +12,8 @@ def start_app():
         response['alerts'].append('No command set to start the app.')
         return response
 
-    gitdeploy.supervisor_update()
-    gitdeploy.start_satellite()
+    response['alerts'].append(
+        gitdeploy.start_satellite()
+    )
     response['success'] = True
     return response
