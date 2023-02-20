@@ -2,6 +2,13 @@ from app.extensions import security, gitdeploy
 from .. import bp
 
 
+def pull_repo():
+    gitdeploy.stop_satellite()
+    gitdeploy.update_repo()
+    gitdeploy.install_requirements()
+    gitdeploy.start_satellite()
+
+
 @bp.get('/pull-repo')
 @security.login_required('www.login', 'logged_in')
 def repo_pull():
@@ -19,8 +26,7 @@ def repo_pull():
                 response["alerts"].append("No changes to pull.")
                 return response
 
-        gitdeploy.install_requirements()
-        gitdeploy.restart_satellite()
+        pull_repo()
         response["alerts"].append("Changes pulled.")
         return response
 
