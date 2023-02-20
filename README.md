@@ -75,4 +75,4 @@ _**Run above in WSL**_
 
 ### Screenshots
 
-![](https://raw.githubusercontent.com/Flask-Planet/GitDeploy/master/__assets__/screenshot_0.png)
+![](https://raw.githubusercontent.com/Flask-Planet/GitDeploy/master/__assets__/screenshot_1.png)
