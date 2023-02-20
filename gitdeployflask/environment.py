@@ -102,7 +102,7 @@ class Environment:
     root_dir: Path = Path.cwd()
 
     conf_dir: Path = root_dir / "conf"
-    conf_file: Path = conf_dir / "gitdeploy.conf.json"
+    conf_file: Path = conf_dir / ".gitdeploy.conf.json"
     conf = dict()
 
     log_dir = root_dir / "logs"
