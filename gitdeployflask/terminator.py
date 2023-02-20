@@ -6,7 +6,9 @@ from pathlib import Path
 
 import pexpect
 
+log_folder = Path(__file__).parent.parent / "logs"
 log_file = Path(__file__).parent.parent / "logs" / "gitdeploy.log"
+log_folder.mkdir(exist_ok=True)
 log_file.touch(exist_ok=True)
 
 terminal_logger = logging.getLogger("terminal")
