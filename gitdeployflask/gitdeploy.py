@@ -35,22 +35,22 @@ class GitDeploy:
     def init_supervisorctl(self):
         self.supervisorctl_process.start()
 
-    def _parse_command(self) -> str:
-        command = "echo 'Waiting for command to be set...'"
-        if self.env.repo_venv_bin.exists():
-            os.listdir(self.env.repo_venv_bin)
-            if self.conf.get("COMMAND"):
-                start_command = self.conf.get("COMMAND").split(" ")[0]
-                if start_command in os.listdir(self.env.repo_venv_bin):
-                    command = f"venv/bin/{self.conf.get('COMMAND')}"
-        return command
+    def status_supervisorctl(self):
+        return self.supervisorctl_process.isalive
+
+    def update_supervisorctl(self):
+        self.supervisorctl_process.send("update all")
+
+    def _parse_command(self) -> tuple:
+        os.listdir(self.env.repo_venv_bin)
+        if self.conf.get("COMMAND"):
+            start_command = self.conf.get("COMMAND").split(" ")[0]
+            if start_command in os.listdir(self.env.repo_venv_bin):
+                return True, f"venv/bin/{self.conf.get('COMMAND')}"
+        return False, "echo 'Waiting for command to be set...'"
 
     def get_repo_contents(self) -> t.List[str]:
         return os.listdir(self.env.repo_dir)
-
-    def supervisor_update(self):
-        with Terminator("venv/bin/supervisorctl -c supervisor/supervisord.conf") as ctl:
-            ctl("update")
 
     def set_conf(self, key: str, value: t.Any, write: bool = False):
         if key not in self.conf:
@@ -101,13 +101,12 @@ class GitDeploy:
             ini.write(
                 Resources.generate_satellite_ini(
                     app="satellite",
-                    command=self._parse_command(),
+                    command=f'venv/bin/{self.conf.get("COMMAND")}',
                     user=self.env.os.user,
                     log_location=self.env.log_file,
                     working_directory=self.env.repo_dir
                 )
             )
-        self.supervisor_update()
 
     def set_tokens(self):
         self.set_conf("T1", Tools.generate_random_token(24))
@@ -136,6 +135,11 @@ class GitDeploy:
             with Terminator("venv/bin/pip", working_directory=self.env.repo_dir, log=False) as pip:
                 return pip(f"freeze")
 
+    def install_package(self):
+        if self.env.repo_pip.exists():
+            with Terminator("venv/bin/pip", working_directory=self.env.repo_dir, log=False) as pip:
+                return pip(f"freeze")
+
     def update_repo(self):
         with Terminator("git") as git:
             return git("pull", working_directory=self.env.repo_dir)
@@ -151,46 +155,33 @@ class GitDeploy:
 
     def status_satellite(self):
         self.supervisorctl_process.send("status satellite")
-
         before = self.supervisorctl_process.before
         if isinstance(before, bytes):
             if "RUNNING" in before.decode("utf-8"):
                 return True
         return False
-        #
-        # with Terminator(
-        #         "venv/bin/supervisorctl -c supervisor/supervisord.conf",
-        #         type_="pexpect_supervisor",
-        #         log=False
-        # ) as ctl:
-        #     output = ctl("status satellite")
-        #
-        # for line in output:
-        #     if "FATAL" in line:
-        #         return False
-        # return True
 
     def start_satellite(self):
         if self.conf.get("COMMAND") is not None:
-            self.supervisorctl_process.send("update all")
-            self.supervisorctl_process.send("start satellite")
-            #
-            # with Terminator("venv/bin/supervisorctl -c supervisor/supervisord.conf") as ctl:
-            #     ctl("start satellite")
+            if self._parse_command()[0]:
+                self.supervisorctl_process.send("start satellite")
+                return "App start requested"
+            else:
+                return "Command runner has not been found in the virtual environment, is it installed?"
+        return "Command is None"
 
     def stop_satellite(self):
-        if self.conf.get("COMMAND") is not None:
-            self.supervisorctl_process.send("stop satellite")
-            #
-            # with Terminator("venv/bin/supervisorctl -c supervisor/supervisord.conf") as ctl:
-            #     ctl("stop satellite")
+        self.supervisorctl_process.send("stop satellite")
+        return "App stop requested"
 
     def restart_satellite(self):
         if self.conf.get("COMMAND") is not None:
-            self.supervisorctl_process.send("restart satellite")
-            #
-            # with Terminator("venv/bin/supervisorctl -c supervisor/supervisord.conf") as ctl:
-            #     ctl("restart satellite")
+            if self._parse_command()[0]:
+                self.supervisorctl_process.send("restart satellite")
+                return "App restart requested"
+            else:
+                return "Command runner has not been found in the virtual environment, is it installed?"
+        return "Command is None"
 
     def read_logs(self) -> list:
         logs = self.env.log_file.read_text().split("\n")
