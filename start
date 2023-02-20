@@ -1,0 +1,10 @@
+#!/bin/sh
+"true" '''\'
+exec "$(dirname "$(readlink -f "$0")")"/venv/bin/python "$0" "$@"
+'''
+
+from gitdeployflask.__main__ import Launcher
+
+if __name__ == '__main__':
+    with Launcher() as output:
+        print(output)
