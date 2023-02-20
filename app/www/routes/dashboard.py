@@ -22,6 +22,8 @@ def dashboard():
         "GIT_TOKEN_NAME": gitdeploy.conf.get("GIT_TOKEN_NAME"),
         "GIT_TOKEN": gitdeploy.conf.get("GIT_TOKEN"),
         "COMMAND": gitdeploy.conf.get("COMMAND"),
+        "WH_ENABLED": gitdeploy.conf.get("WH_ENABLED"),
+        "WH_SECRET": gitdeploy.conf.get("WH_SECRET"),
     }
 
     if gitdeploy.env.repo_dot_git_config.exists():
@@ -41,6 +43,6 @@ def dashboard():
         repo_folder=repo_folder,
         venv_exists=venv_exists,
         repo_dot_git_config_exists=repo_dot_git_config_exists,
-        git_url_exists=gitdeploy.conf.get("GIT"),
+        git_url_exists=True if gitdeploy.conf.get("GIT") else False,
         command_exists=command_exists,
     )
