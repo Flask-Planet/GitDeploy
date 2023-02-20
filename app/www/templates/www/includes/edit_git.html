@@ -12,6 +12,10 @@
             :disabled="repo_dot_git_config_exists"
     >
 
+    <div class="small-alert mb-3" x-show="repo_dot_git_config_exists">
+        To change the git url or its private status, you must destroy the repo.
+    </div>
+
     <input
             name="git_private"
             id="git_private"
@@ -19,13 +23,8 @@
             class="mb-3"
             x-on:click="git_is_private = !git_is_private"
             :checked="git_is_private"
-            :disabled="repo_dot_git_config_exists"
     >
     <label class="label-inline" for="git_private">This repo requires an access token</label>
-
-    <div class="small-alert mb-3" x-show="repo_dot_git_config_exists">
-        To change the git url or its private status, you must destroy the repo.
-    </div>
 
     <div x-show="git_is_private" x-cloak>
         <label for="git_username">
