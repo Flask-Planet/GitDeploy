@@ -59,6 +59,16 @@ pip install -r requirements.txt
 python3 gitdeployflask
 ```
 
+or
+
+```bash
+chmod +x start
+```
+
+```bash
+./start
+```
+
 **Windows:**
 
 _**Run above in WSL**_
