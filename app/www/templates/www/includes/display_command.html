@@ -1,19 +1,14 @@
-<p>
-    <strong>
-        Command
-    </strong>
-</p>
-<div class="false_pre ptb-2 button-group">
+<div style="display: flex; justify-content: space-between">
+    <p class="mb-0"><strong>Command</strong></p>
+
+    <p class="u-red mb-0" x-show="!satellite_status">Stopped</p>
+    <p class="u-green mb-0" x-show="satellite_status">Running</p>
+</div>
+
+<div class="false_pre ptb-2">
     <span>
         {{ '-' if settings.COMMAND == '' else settings.COMMAND }}
     </span>
-
-    <div class="tag-no-shadow u-styled-red" x-show="!satellite_status"
-         style="padding: 8px; margin: 0">Stopped
-    </div>
-    <div class="tag-no-shadow u-styled-green" x-show="satellite_status"
-         style="padding: 8px; margin: 0">Running
-    </div>
 </div>
 
 <div>
