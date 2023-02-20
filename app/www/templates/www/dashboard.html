@@ -69,15 +69,16 @@
         <div class="small-alert" x-show="!venv_exists">No environment found.</div>
 
         <div x-show="venv_exists" x-cloak>
-            <template x-for="package_ in packages" x-show="packages.length > 0" x-cloak>
+            <template x-for="package_ in packages" x-show="has_packages" x-cloak>
                 <div class="tag-no-shadow" x-text="package_"></div>
             </template>
-            <div class="small-alert" x-show="packages.length < 1">No packages installed</div>
+            <div class="small-alert" x-show="!has_packages">No packages installed</div>
 
-            <form name="pip_install" method="post" class="mt-3">
+            <form class="mt-3">
                 <label for="install" class="u-no-bold">Install a package</label>
-                <input name="install" id="install" type="text" placeholder="pip package name" class="mb-0">
-                <button type="submit" class="u-no-shadow">Install</button>
+                <input name="install" type="text" placeholder="pip package name"
+                       class="mb-0" x-model="package_name">
+                <button type="button" class="u-no-shadow" @click="pip_install($el)">Install</button>
             </form>
         </div>
 
