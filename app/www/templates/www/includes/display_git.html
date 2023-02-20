@@ -4,7 +4,7 @@
     </strong>
 </p>
 
-<div class="false_pre">{{ settings.GIT_URL }}</div>
+<div class="false_pre">{{ '-' if settings.GIT_URL == '' else settings.GIT_URL }}</div>
 <div class="mb-3">
     <button class="button button-blue u-no-shadow" @click="edit_git = true">Edit</button>
     <button class="button u-no-shadow"
