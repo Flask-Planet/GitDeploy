@@ -10,5 +10,6 @@ def save_command():
     gitdeploy.read_conf()
     gitdeploy.set_conf('COMMAND', request.form.get("command", None), write=True)
     gitdeploy.write_satellite_ini()
+    gitdeploy.update_supervisorctl()
     flash("Command updated.")
     return redirect(url_for("www.dashboard"))
