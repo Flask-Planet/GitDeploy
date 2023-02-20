@@ -1,6 +1,6 @@
 import json
 
-from flask import request, redirect, url_for
+from flask import request
 
 from app.extensions import security, gitdeploy
 from .. import bp
@@ -84,12 +84,14 @@ def webhook_status():
 @bp.get('/enable-webhook')
 @security.login_required('www.login', 'logged_in')
 def enable_webhook():
+    response = {"success": True, "alerts": ['Webhook enabled']}
     gitdeploy.set_conf("WH_ENABLED", True, write=True)
-    return redirect(url_for("www.dashboard"))
+    return response
 
 
 @bp.get('/disable-webhook')
 @security.login_required('www.login', 'logged_in')
 def disable_webhook():
+    response = {"success": True, "alerts": ['Webhook disabled']}
     gitdeploy.set_conf("WH_ENABLED", False, write=True)
-    return redirect(url_for("www.dashboard"))
+    return response
