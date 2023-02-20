@@ -1,12 +1,12 @@
 import os
 
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template
 
-from app.extensions import security, gitdeploy, terminator
+from app.extensions import security, gitdeploy
 from .. import bp
 
 
-@bp.route('/dashboard', methods=['GET'])
+@bp.get('/dashboard')
 @security.login_required('www.login', 'logged_in')
 def dashboard():
     gitdeploy.read_conf()
@@ -34,14 +34,6 @@ def dashboard():
 
     if gitdeploy.env.repo_python.exists():
         venv_exists = True
-
-    if request.method == 'POST':
-        install = request.form.get('install')
-        if install:
-            with terminator(f"venv/bin/pip install", working_directory=gitdeploy.env.repo_dir) as command:
-                out, err = command(install)
-                flash(out, "success")
-                return redirect(url_for("www.dashboard"))
 
     return render_template(
         bp.tmpl("dashboard.html"),
