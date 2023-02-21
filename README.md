@@ -23,6 +23,8 @@ It has webhooks support for github and gitlab, the end goal is to have Heroku st
 - [ ] Add support to manage nginx proxy
 - [ ] Add support to manage certbot ( Let's Encrypt )
 
+See more in the issues section!
+
 ### How to contribute
 
 - Fork the repository
