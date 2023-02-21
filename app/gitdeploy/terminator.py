@@ -6,10 +6,10 @@ from pathlib import Path
 
 import pexpect
 
-log_folder = Path(__file__).parent.parent / "logs"
-log_file = Path(__file__).parent.parent / "logs" / "gitdeploy.log"
-log_folder.mkdir(exist_ok=True)
-log_file.touch(exist_ok=True)
+from .environment import Environment
+
+Environment.log_dir.mkdir(exist_ok=True)
+Environment.log_file.touch(exist_ok=True)
 
 terminal_logger = logging.getLogger("terminal")
 terminal_logger.setLevel(logging.DEBUG)
@@ -19,7 +19,7 @@ stdout_handler = logging.StreamHandler()
 stdout_handler.setLevel(logging.DEBUG)
 stdout_handler.setFormatter(formatter)
 
-file_handler = logging.FileHandler(log_file)
+file_handler = logging.FileHandler(Environment.log_file)
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 

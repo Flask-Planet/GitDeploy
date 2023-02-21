@@ -8,7 +8,7 @@ from pathlib import Path
 logging.basicConfig(level=logging.DEBUG)
 
 CWD = Path.cwd()
-SOCKET = Path.cwd() / 'supervisor.sock'
+SOCKET = Path.cwd() / 'instance' / 'supervisor.sock'
 
 
 class Launcher:

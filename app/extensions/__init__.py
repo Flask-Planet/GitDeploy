@@ -1,6 +1,6 @@
 from flask_bigapp import BigApp, Security
 
-from gitdeployflask import Terminator, GitDeploy, Tools
+from ..gitdeploy import Terminator, GitDeploy, Tools
 
 bigapp = BigApp()
 security = Security()

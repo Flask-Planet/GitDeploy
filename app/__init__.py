@@ -26,3 +26,6 @@ def create_app():
     bigapp.import_theme("theme")
 
     return app
+
+
+wsgi = create_app()

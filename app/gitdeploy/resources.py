@@ -2,10 +2,7 @@ import os
 from pathlib import Path
 from typing import Union
 
-try:
-    from tools import Tools
-except ModuleNotFoundError:
-    from gitdeployflask.tools import Tools
+from .tools import Tools
 
 
 def _wash_none_env(env: Union[None, str]) -> Union[None, str, bool]:

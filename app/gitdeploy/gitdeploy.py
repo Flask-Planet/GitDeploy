@@ -10,27 +10,49 @@ from .the_nightman import Supervisorctl
 from .tools import Tools
 
 
-def _failed(outputs: t.List[str], fail_on: t.List[str] = None):
-    complete = ""
-    for output in outputs:
-        complete += output
-
-    for fail in fail_on:
-        if fail in complete:
-            return True
-    return False
-
-
 class GitDeploy:
     dummy_command = "echo 'Waiting for command to be set...'"
     supervisorctl_process: t.Optional[Supervisorctl] = None
 
     def __init__(self):
         self.env = Environment()
-        self.supervisorctl_process = Supervisorctl()
+        self._first_run()
         self.read_conf()
         if not self.env.satellite_ini.exists():
             self.write_satellite_ini()
+        self.supervisorctl_process = Supervisorctl()
+
+    def _first_run(self):
+        self.env.instance_dir.mkdir(exist_ok=True)
+        self.env.log_dir.mkdir(exist_ok=True)
+        print(self.env.log_dir)
+        self.env.repo_dir.mkdir(exist_ok=True)
+        self.env.log_file.touch(exist_ok=True)
+
+        if not self.env.conf_file.exists():
+            with open(self.env.conf_file, "w") as settings:
+                settings.write(
+                    json.dumps(
+                        Resources.generate_default_conf(),
+                        indent=4
+                    )
+                )
+
+    def _parse_command(self) -> tuple:
+        os.listdir(self.env.repo_venv_bin)
+        if self.conf.get("COMMAND"):
+            start_command = self.conf.get("COMMAND").split(" ")[0]
+            if start_command in os.listdir(self.env.repo_venv_bin):
+                return True, f"venv/bin/{self.conf.get('COMMAND')}"
+        return False, "echo 'Waiting for command to be set...'"
+
+    def _write_dot_git_config(self, new_url):
+        if self.env.repo_dot_git_config.exists():
+            with open(self.env.repo_dot_git_config, "r") as old_config:
+                old_config_ = old_config.read()
+                with open(self.env.repo_dot_git_config, "w") as new_config:
+                    new_config_ = re.sub(r"(?<=url = ).*", new_url, old_config_)
+                    new_config.write(new_config_)
 
     def init_supervisorctl(self):
         self.supervisorctl_process.start()
@@ -40,14 +62,6 @@ class GitDeploy:
 
     def update_supervisorctl(self):
         self.supervisorctl_process.send("update all")
-
-    def _parse_command(self) -> tuple:
-        os.listdir(self.env.repo_venv_bin)
-        if self.conf.get("COMMAND"):
-            start_command = self.conf.get("COMMAND").split(" ")[0]
-            if start_command in os.listdir(self.env.repo_venv_bin):
-                return True, f"venv/bin/{self.conf.get('COMMAND')}"
-        return False, "echo 'Waiting for command to be set...'"
 
     def get_repo_contents(self) -> t.List[str]:
         return os.listdir(self.env.repo_dir)
@@ -71,14 +85,6 @@ class GitDeploy:
                 json.dump(new_conf, conf, indent=4)
             else:
                 json.dump(self.conf, conf, indent=4)
-
-    def _write_dot_git_config(self, new_url):
-        if self.env.repo_dot_git_config.exists():
-            with open(self.env.repo_dot_git_config, "r") as old_config:
-                old_config_ = old_config.read()
-                with open(self.env.repo_dot_git_config, "w") as new_config:
-                    new_config_ = re.sub(r"(?<=url = ).*", new_url, old_config_)
-                    new_config.write(new_config_)
 
     def set_dot_git_config_with_token(self) -> bool:
         git_url = self.conf.get("GIT_URL")

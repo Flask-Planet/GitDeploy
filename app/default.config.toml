@@ -3,8 +3,8 @@
 # app.config["YOUR_VAR_NAME"]. All variables defined below will be capitalised when imported.
 
 [flask]
-APP_NAME = "app"
-VERSION = "0.0.1"
+APP_NAME = "gitdeploy"
+VERSION = "0.4"
 SECRET_KEY = "<SECRET_KEY>"
 DEBUG = false
 TESTING = false
@@ -13,17 +13,17 @@ ERROR_404_HELP = true
 SQLALCHEMY_TRACK_MODIFICATIONS = false
 EXPLAIN_TEMPLATE_LOADING = false
 
-# [database.main] is loaded as SQLALCHEMY_DATABASE_URI
-# type = mysql / postgresql / sqlite
-# if type = sqlite, config parser will ignore username and password
-[database]
-
-[database.main]
-enabled = true
-type = "sqlite"
-database_name = "database"
-location = "db"
-port = ""
-username = "user"
-password = "password"
-
+## [database.main] is loaded as SQLALCHEMY_DATABASE_URI
+## type = mysql / postgresql / sqlite
+## if type = sqlite, config parser will ignore username and password
+#[database]
+#
+#[database.main]
+#enabled = true
+#type = "sqlite"
+#database_name = "database"
+#location = "db"
+#port = ""
+#username = "user"
+#password = "password"
+#
