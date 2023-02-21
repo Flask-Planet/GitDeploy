@@ -15,6 +15,7 @@ It has webhooks support for github and gitlab, the end goal is to have Heroku st
 
 ### TODOs:
 
+- [ ] Create auto install sh scripts for different distros
 - [ ] Change the JavaScript to polling function to a websocket ( Flask-SocketIO )
   - ( app/theme/static/js/alpine:global:x-data.js )
 - [ ] Add support for more git providers ( Bitbucket, Gitlab, etc. )
