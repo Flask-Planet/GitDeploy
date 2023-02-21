@@ -13,9 +13,15 @@ It has webhooks support for github and gitlab, the end goal is to have Heroku st
 - Free to add your own ideas!
 - Beginners are welcome and encouraged to join in!
 
-### Project Board:
+### TODOs:
 
-[Click here](https://github.com/orgs/Flask-Planet/projects/1/views/1?layout=table) to see what needs done.
+- [ ] Change the JavaScript to polling function to a websocket ( Flask-SocketIO )
+  - ( app/theme/static/js/alpine:global:x-data.js )
+- [ ] Add support for more git providers ( Bitbucket, Gitlab, etc. )
+- [ ] Ability to add multiple repositories, and start/stop their commands
+- [ ] Add support to spin up a nginx container / local install to serve the app
+- [ ] Add support to manage nginx proxy
+- [ ] Add support to manage certbot ( Let's Encrypt )
 
 ### How to contribute
 
