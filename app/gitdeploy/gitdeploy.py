@@ -11,7 +11,7 @@ from .tools import Tools
 
 
 class GitDeploy:
-    dummy_command = "echo 'Waiting for command to be set...'"
+    dummy_command = "python --version"
     supervisorctl_process: t.Optional[Supervisorctl] = None
 
     def __init__(self):
@@ -106,7 +106,7 @@ class GitDeploy:
             ini.write(
                 Resources.generate_satellite_ini(
                     app="satellite",
-                    command=f'venv/bin/{self.conf.get("COMMAND")}',
+                    command=self.env.repo_venv_bin / self.conf.get("COMMAND", self.dummy_command),
                     log_location=self.env.log_file,
                     working_directory=self.env.repo_dir
                 )
@@ -115,7 +115,6 @@ class GitDeploy:
     def set_tokens(self):
         self.set_conf("T1", Tools.generate_random_token(24))
         self.set_conf("T2", Tools.generate_random_token(24))
-        self.set_conf("FIRST_RUN", False)
         self.write_conf()
 
     def clone_repo(self):
@@ -165,24 +164,24 @@ class GitDeploy:
                 return True
         return False
 
-    def start_satellite(self):
+    def start_satellite(self) -> t.Optional[str]:
         if self.conf.get("COMMAND") is not None:
             if self._parse_command()[0]:
                 self.supervisorctl_process.send("start satellite")
-                return "App start requested"
+                return None
             else:
                 return "Command runner has not been found in the virtual environment, is it installed?"
         return "Command is None"
 
-    def stop_satellite(self):
+    def stop_satellite(self) -> None:
         self.supervisorctl_process.send("stop satellite")
-        return "App stop requested"
+        return None
 
-    def restart_satellite(self):
+    def restart_satellite(self) -> t.Optional[str]:
         if self.conf.get("COMMAND") is not None:
             if self._parse_command()[0]:
                 self.supervisorctl_process.send("restart satellite")
-                return "App restart requested"
+                return None
             else:
                 return "Command runner has not been found in the virtual environment, is it installed?"
         return "Command is None"
