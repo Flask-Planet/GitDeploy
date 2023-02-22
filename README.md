@@ -6,6 +6,12 @@ GitDeploy is a simple tool to deploy your python projects to a docker container 
 
 It has webhooks support for github and gitlab, the end goal is to have Heroku style functionality.
 
+## Docker
+
+[ goto: [flaskplanet/gitdeploy](https://hub.docker.com/repository/docker/flaskplanet/gitdeploy/general) ]
+
+### Notice
+
 **Project is still in development, and may not work as intended.**
 
 ## Contributors wanted!
@@ -17,7 +23,7 @@ It has webhooks support for github and gitlab, the end goal is to have Heroku st
 
 - [ ] Create auto install sh scripts for different distros
 - [ ] Change the JavaScript to polling function to a websocket ( Flask-SocketIO )
-  - ( app/theme/static/js/alpine:global:x-data.js )
+    - ( app/theme/static/js/alpine:global:x-data.js )
 - [ ] Add support for more git providers ( Bitbucket, Gitlab, etc. )
 - [ ] Ability to add multiple repositories, and start/stop their commands
 - [ ] Add support to spin up a nginx container / local install to serve the app
@@ -65,17 +71,7 @@ pip install -r requirements.txt
 ```
 
 ```bash
-python3 gitdeployflask
-```
-
-or
-
-```bash
-chmod +x start
-```
-
-```bash
-./start
+python3 start.py
 ```
 
 **Windows:**
