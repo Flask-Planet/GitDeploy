@@ -2,7 +2,7 @@
     <div class="p-2">
         <p style="margin: 0; font-weight: bold; color: #ababab">GitDeploy</p>
     </div>
-    {% if staging %}{% else %}
+    {% if session["logged_in"] %}
         <div>
             <a class="button me-2" href="{{ url_for('www.logs') }}">View Logs</a>
             <a href="{{ url_for('www.logout') }}" class="button me-2"
