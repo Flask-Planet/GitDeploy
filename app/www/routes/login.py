@@ -17,7 +17,6 @@ def login():
 
         if t1 == gitdeploy.conf.get("T1") and t2 == gitdeploy.conf.get("T2"):
             session["logged_in"] = True
-            session.modified = True
             return redirect(url_for("www.dashboard"))
         else:
             flash("Invalid tokens")
