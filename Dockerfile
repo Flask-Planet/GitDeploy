@@ -8,7 +8,7 @@ RUN pip install -r requirements.txt
 #ENV GD_GIT_PRIVATE=true
 #ENV GD_GIT_TOKEN_NAME=none
 #ENV GD_GIT_TOKEN=none
-#ENV GD_COMMAND='gunicorn -w 4 -b 0.0.0.0:5000 run:sgi'
+#ENV GD_COMMAND='gunicorn -w 3 -b 0.0.0.0:5000 run:sgi'
 #ENV GD_WEBHOOK_ENABLED='true'
 #ENV GD_WEBHOOK_SK=SuperSecretKey
 COPY . .
