@@ -108,6 +108,7 @@ class Terminator:
             popen: subprocess.Popen [DEFAULT]
             check_output: subprocess.check_output
             pexpect: pexpect.spawn
+            run: subprocess.run
         """
         self.base = base
         self.type_ = type_
@@ -121,7 +122,9 @@ class Terminator:
             return self._check_output
         if self.type_ == "pexpect":
             return self._pexpect
-
+        if self.type_ == "run":
+            return self._run
+        
         return self._popen
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -226,3 +229,32 @@ class Terminator:
             output_lines.append(after)
 
         return output_lines
+
+    def _run(
+            self,
+            command: t.Union[str, list],
+            working_directory: t.Optional[Path] = None,
+            without_base: bool = False,
+    ) -> list:
+        if self.base:
+            command = f"{self.base} {command}"
+
+        if working_directory:
+            self.working_directory = working_directory
+
+        if isinstance(command, str):
+            command = command.split(" ")
+
+        if without_base:
+            command = command[1:]
+        else:
+            if self.base:
+                command = [self.base, *command]
+
+        process = subprocess.run(
+            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=self.working_directory
+        )
+        return [
+            process.stdout.decode() if isinstance(process.stdout, bytes) else process.stdout,
+            process.stderr.decode() if isinstance(process.stderr, bytes) else process.stderr
+        ]
