@@ -8,12 +8,14 @@ from pathlib import Path
 logging.basicConfig(level=logging.DEBUG)
 
 CWD = Path.cwd()
-SOCKET = Path.cwd() / 'instance' / 'supervisor.sock'
+INSTANCE = CWD / 'instance'
+SOCKET = INSTANCE / 'supervisor.sock'
 PYBIN = Path(sys.executable).parent
 
 
 class Launcher:
     def __init__(self):
+        INSTANCE.mkdir(exist_ok=True)
         self.executor = ThreadPoolExecutor(max_workers=3)
         self.supervisord = None
         self.gunicorn = None
@@ -25,6 +27,11 @@ class Launcher:
         assert self.gunicorn_location.exists()
 
         self.supervisord = self.executor.submit(launch_supervisord).result()
+        while True:
+            if SOCKET.exists():
+                break
+            time.sleep(1)
+
         self.gunicorn = self.executor.submit(launch_gunicorn).result()
 
     def __enter__(self):
