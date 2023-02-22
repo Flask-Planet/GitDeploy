@@ -17,18 +17,22 @@ class Supervisorctl:
         assert self.supervisord_location.exists()
 
     def start(self):
-        terminal_logger.info("waiting for supervisor.sock")
-        while True:
-            sleep(1)
-            if Environment.supervisord_socket.exists():
-                break
+        assert Environment.supervisord_socket.exists()
 
         terminal_logger.info("starting supervisorctl")
-        self.process = pexpect.spawn(f'{self.supervisord_location} -c supervisord.conf',
-                                     cwd=Environment.root_dir)
+
+        self.process = pexpect.spawn(
+            f'{self.supervisord_location} -c supervisord.conf',
+            cwd=Environment.root_dir,
+            timeout=None,
+        )
         while True:
+            sleep(0.5)
             if self.process.isalive():
                 break
+
+        terminal_logger.info("supervisorctl started")
+
         self.process.expect("supervisor> ")
         if isinstance(self.process.after, bytes):
             self.after = self.process.after.decode()
