@@ -12,4 +12,5 @@ RUN pip install -r requirements.txt
 #ENV GD_WEBHOOK_ENABLED='true'
 #ENV GD_WEBHOOK_SK=SuperSecretKey
 COPY . .
+RUN mkdir "instance"
 ENTRYPOINT ["python3", "start.py"]
