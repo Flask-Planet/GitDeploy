@@ -6,12 +6,12 @@ services:
       - "5000" # The port the flask app is running on
       - "9898" # The port that GitDeploy is running on
     volumes:
-      - gitdeploy_instance:/autogit/instance
-      - gitdeploy_repo:/autogit/repo
+      - instance:/autogit/instance
+      - repo:/autogit/repo
 
 volumes:
-  autogit_instance:
-  autogit_repo:
+  instance:
+  repo:
 
 # adding the repo dir will allow you to rebuild the container but keep the repo safe,
 # this is a good idea if you have user data in a local sqlite database
