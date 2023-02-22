@@ -78,7 +78,7 @@ files = {conf_dir}/*.ini""".strip().format(**locals())
     @staticmethod
     def generate_satellite_ini(
             app: str,
-            command: str,
+            command: Path,
             log_location: Path,
             working_directory: Path,
     ) -> str:
