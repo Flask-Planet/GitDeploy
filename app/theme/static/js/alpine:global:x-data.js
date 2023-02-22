@@ -151,10 +151,17 @@ document.addEventListener('alpine:init', () => {
         create_venv(el) {
             el.innerText = 'Creating Virtual Environment...';
             fetch(`/api/create-venv`, {})
-                .catch(_ => {
-                    this.continue_polling = false;
-                })
-            el.innerText = 'Create Virtual Environment';
+                .then(response => response.json()).then(jsond => {
+                this.alerts = jsond.alerts;
+                if (jsond.success) {
+                    el.innerText = 'Create Virtual Environment';
+                    this.status_();
+                } else {
+                    el.innerText = 'Error!';
+                }
+            }).catch(error => {
+                console.log(error);
+            })
         },
         pip_install(el) {
             el.innerText = 'Installing...';
