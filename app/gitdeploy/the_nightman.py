@@ -1,4 +1,5 @@
 """fighter of the dayman"""
+from pathlib import Path
 from time import sleep
 
 import pexpect
@@ -12,6 +13,8 @@ class Supervisorctl:
         self.process = None
         self.before = None
         self.after = None
+        self.supervisord_location = Path(Environment.pybin / 'supervisorctl')
+        assert self.supervisord_location.exists()
 
     def start(self):
         terminal_logger.info("waiting for supervisor.sock")
@@ -21,8 +24,8 @@ class Supervisorctl:
                 break
 
         terminal_logger.info("starting supervisorctl")
-        self.process = pexpect.spawn("venv/bin/supervisorctl", cwd=Environment.root_dir)
-
+        self.process = pexpect.spawn(f'{self.supervisord_location} -c supervisord.conf',
+                                     cwd=Environment.root_dir)
         while True:
             if self.process.isalive():
                 break

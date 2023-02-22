@@ -1,3 +1,4 @@
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -5,6 +6,7 @@ from pathlib import Path
 @dataclass(frozen=True)
 class Environment:
     root_dir: Path = Path.cwd()
+    pybin: Path = Path(sys.executable).parent
     instance_dir: Path = root_dir / "instance"
     log_dir = root_dir / "logs"
 

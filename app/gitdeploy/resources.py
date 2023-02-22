@@ -79,7 +79,6 @@ files = {conf_dir}/*.ini""".strip().format(**locals())
     def generate_satellite_ini(
             app: str,
             command: str,
-            user: str,
             log_location: Path,
             working_directory: Path,
     ) -> str:
@@ -87,7 +86,6 @@ files = {conf_dir}/*.ini""".strip().format(**locals())
 [program:{app}]
 directory={working_directory}
 command={command}
-user={user}
 autostart=false
 autorestart=false
 startretries=0

@@ -9,6 +9,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 CWD = Path.cwd()
 SOCKET = Path.cwd() / 'instance' / 'supervisor.sock'
+PYBIN = Path(sys.executable).parent
 
 
 class Launcher:
@@ -16,8 +17,13 @@ class Launcher:
         self.executor = ThreadPoolExecutor(max_workers=3)
         self.supervisord = None
         self.gunicorn = None
+        self.supervisord_location = PYBIN / 'supervisord'
+        self.gunicorn_location = PYBIN / 'gunicorn'
 
     def start(self):
+        assert self.supervisord_location.exists()
+        assert self.gunicorn_location.exists()
+
         self.supervisord = self.executor.submit(launch_supervisord).result()
         self.gunicorn = self.executor.submit(launch_gunicorn).result()
 
@@ -36,7 +42,7 @@ class Launcher:
 
 
 def launch_supervisord():
-    process = subprocess.Popen(['venv/bin/supervisord'], cwd=CWD)
+    process = subprocess.Popen([Path(PYBIN / 'supervisord'), '-c', 'supervisord.conf'], cwd=CWD)
     return process
 
 
@@ -44,7 +50,7 @@ def launch_gunicorn():
     gunicorn_config = Path.cwd() / 'gunicorn.conf.py'
     assert gunicorn_config.exists()
 
-    process = subprocess.run(['venv/bin/gunicorn'], cwd=CWD, stdout=sys.stdout, stderr=sys.stderr)
+    process = subprocess.run([Path(PYBIN / 'gunicorn')], cwd=CWD, stdout=sys.stdout, stderr=sys.stderr)
     return process
 
 

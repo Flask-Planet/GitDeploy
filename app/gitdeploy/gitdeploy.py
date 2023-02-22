@@ -25,7 +25,6 @@ class GitDeploy:
     def _first_run(self):
         self.env.instance_dir.mkdir(exist_ok=True)
         self.env.log_dir.mkdir(exist_ok=True)
-        print(self.env.log_dir)
         self.env.repo_dir.mkdir(exist_ok=True)
         self.env.log_file.touch(exist_ok=True)
 
@@ -108,7 +107,6 @@ class GitDeploy:
                 Resources.generate_satellite_ini(
                     app="satellite",
                     command=f'venv/bin/{self.conf.get("COMMAND")}',
-                    user=self.env.os.user,
                     log_location=self.env.log_file,
                     working_directory=self.env.repo_dir
                 )

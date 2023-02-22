@@ -4,13 +4,12 @@ RUN apk add --update --no-cache gcc musl-dev linux-headers git supervisor
 WORKDIR /autogit
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
-ENV GD_ENV=docker
 #ENV GD_GIT_URL='https://github.com/Flask-Planet/flask-planet.org.git'
 #ENV GD_GIT_PRIVATE=true
 #ENV GD_GIT_TOKEN_NAME=none
 #ENV GD_GIT_TOKEN=none
 #ENV GD_COMMAND='gunicorn -w 4 -b 0.0.0.0:5000 run:sgi'
 #ENV GD_WEBHOOK_ENABLED='true'
-#ENV GD_WEBHOOK_SK=33f00d646f273916552ca88bd57b80108f4bae404141f7f02f5b4160eee8730e5cc9717311f095d6aa1bb9465a5ec0d9fa980f2c5552d8ae77a2ed38a2f645b3
+#ENV GD_WEBHOOK_SK=SuperSecretKey
 COPY . .
-ENTRYPOINT ["python3", "main.py"]
+ENTRYPOINT ["python3", "start.py"]
