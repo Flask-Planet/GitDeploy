@@ -6,18 +6,15 @@ from .. import bp
 
 @bp.route('/first-run', methods=["GET", "POST"])
 def first_run():
-    if request.method == "POST":
-        session["logged_in"] = True
-        session.modified = True
-        return redirect(url_for("www.dashboard"))
-
     gitdeploy.read_conf()
-    session["logged_in"] = False
-    session.modified = True
+
     if not gitdeploy.conf.get("FIRST_RUN"):
         return redirect(url_for("www.login"))
 
-    gitdeploy.set_tokens()
+    if request.method == "POST":
+        session["logged_in"] = True
+        gitdeploy.set_conf("FIRST_RUN", False, write=True)
+        return redirect(url_for("www.dashboard"))
 
     return render_template(
         bp.tmpl("first_run.html"),
