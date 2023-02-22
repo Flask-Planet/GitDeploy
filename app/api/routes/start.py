@@ -11,9 +11,6 @@ def start_app():
     if not gitdeploy.conf.get('COMMAND'):
         response['alerts'].append('No command set to start the app.')
         return response
-
-    response['alerts'].append(
-        gitdeploy.start_satellite()
-    )
+    gitdeploy.start_satellite()
     response['success'] = True
     return response
