@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 FROM python:3.11-alpine
 RUN apk add --update --no-cache gcc musl-dev linux-headers git supervisor
-WORKDIR /autogit
+WORKDIR /gitdeploy
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 #ENV GD_GIT_URL='https://github.com/Flask-Planet/flask-planet.org.git'

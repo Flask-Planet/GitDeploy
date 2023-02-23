@@ -6,8 +6,8 @@ services:
       - "5000" # The port the flask app is running on
       - "9898" # The port that GitDeploy is running on
     volumes:
-      - instance:/autogit/instance
-      - repo:/autogit/repo
+      - instance:/gitdeploy/instance
+      - repo:/gitdeploy/repo
 
 volumes:
   instance:
