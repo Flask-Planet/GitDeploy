@@ -46,36 +46,6 @@ class Resources:
         }
 
     @staticmethod
-    def generate_supervisor_conf(
-            supervisor_dir: str,
-            log_file: str,
-            conf_dir: str
-    ):
-        return """
-[unix_http_server]
-file={supervisor_dir}/supervisor.sock
-
-[supervisord]
-logfile={log_file}
-logfile_maxbytes=10KB
-logfile_backups=0
-loglevel=info
-pidfile={supervisor_dir}/supervisord.pid
-nodaemon=true
-silent=true
-minfds=1024
-minprocs=200
-
-[rpcinterface:supervisor]
-supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
-
-[supervisorctl]
-serverurl=unix://{supervisor_dir}/supervisor.sock
-
-[include]
-files = {conf_dir}/*.ini""".strip().format(**locals())
-
-    @staticmethod
     def generate_satellite_ini(
             app: str,
             command: Path,
