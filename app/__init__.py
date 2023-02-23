@@ -5,7 +5,6 @@ from flask import Flask
 from app.extensions import bigapp, gitdeploy
 
 gitdeploy.init_supervisorctl()
-gitdeploy.set_tokens()
 
 while True:
     sleep(1)
