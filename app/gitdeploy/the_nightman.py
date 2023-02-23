@@ -22,7 +22,7 @@ class Supervisorctl:
         terminal_logger.info("starting supervisorctl")
 
         self.process = pexpect.spawn(
-            f'{self.supervisord_location} -c supervisord.conf',
+            f'{self.supervisord_location} -c {Path(Environment.root_dir / "supervisord.conf")}',
             cwd=Environment.root_dir,
             timeout=None,
         )
