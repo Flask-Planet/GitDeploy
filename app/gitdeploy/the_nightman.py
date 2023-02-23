@@ -48,6 +48,11 @@ class Supervisorctl:
         self.process.expect(pexpect.EOF)
         self.before = self.process.before
         self.after = self.process.after
+
+        terminal_logger.info(
+            self.process.before.decode() if isinstance(self.process.before, bytes) else self.process.before)
+        terminal_logger.info("supervisorctl stopped")
+
         self.process.close()
         self.process = None
 
@@ -58,5 +63,9 @@ class Supervisorctl:
     def send(self, line):
         self.process.sendline(line)
         self.process.expect("supervisor> ")
+
         self.before = self.process.before
         self.after = self.process.after
+
+        terminal_logger.info(
+            self.process.before.decode() if isinstance(self.process.before, bytes) else self.process.before)
