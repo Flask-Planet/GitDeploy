@@ -10,7 +10,7 @@ It has webhooks support for github and gitlab, the end goal is to have Heroku st
 
 [ goto: [flaskplanet/gitdeploy](https://hub.docker.com/repository/docker/flaskplanet/gitdeploy/general) ]
 
-Latest: v1.0.5 ( Stable )
+Latest: v1.0.6 ( Stable )
 
 ### Notice
 
