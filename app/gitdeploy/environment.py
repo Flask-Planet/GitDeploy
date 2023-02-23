@@ -12,7 +12,7 @@ class Environment:
 
     log_file: Path = log_dir / "gitdeploy.log"
     conf_file: Path = instance_dir / ".gitdeploy.conf.json"
-    supervisord_socket: Path = instance_dir / "supervisor.sock"
+    supervisord_socket: Path = root_dir / "supervisor.sock"
     satellite_ini: Path = instance_dir / "satellite.ini"
 
     repo_dir: Path = root_dir / "repo"
