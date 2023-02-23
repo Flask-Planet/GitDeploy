@@ -3,9 +3,10 @@
 # app.config["YOUR_VAR_NAME"]. All variables defined below will be capitalised when imported.
 
 [flask]
-APP_NAME = "gitdeploy_<INSTANCE_TAG_8cc331ae4b>"
+APP_NAME = "<INSTANCE_TAG_8cc331ae4b>"
 VERSION = "0.4"
-SECRET_KEY = "gitdeploy_<SECRET_KEY_8cc331ae4b>"
+SECRET_KEY = "<SECRET_KEY_8cc331ae4b>"
+SESSION_COOKIE_NAME = "<SESSION_8cc331ae4b>"
 DEBUG = false
 TESTING = false
 SESSION_TIME = 480

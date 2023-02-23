@@ -16,8 +16,9 @@ PYBIN = Path(sys.executable).parent
 VERSION_SIG = '8cc331ae4b'
 
 # These should reflect the values in app/default.config.toml
+os.environ[f"INSTANCE_TAG_{VERSION_SIG}"] = f"gitdeploy_{os.urandom(24).hex()}"
 os.environ[f"SECRET_KEY_{VERSION_SIG}"] = os.urandom(24).hex()
-os.environ[f"INSTANCE_TAG_{VERSION_SIG}"] = os.urandom(24).hex()
+os.environ[f"SESSION_{VERSION_SIG}"] = f"session_{os.urandom(24).hex()}"
 
 
 def launch_supervisord() -> subprocess.Popen:
