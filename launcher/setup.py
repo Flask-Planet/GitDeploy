@@ -13,9 +13,6 @@ if not Env.SCONF.exists():
     logging.info("Generating supervisord.conf")
     with open(Env.SCONF, 'w') as f:
         f.write(generate_supervisor_conf(
-            supervisord_sock=Env.SSOCK,
-            supervisord_pid=Env.SPID,
-            log_file=Env.SLOG,
             ini_location=Env.INILOC
         ))
 
@@ -55,7 +52,7 @@ class Launcher:
                 break
             time.sleep(1)
 
-        logging.info("Starting supervisord")
+        logging.info("supervisord started, launching gunicorn...")
 
         launch_gunicorn()
 
