@@ -72,8 +72,22 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+**_Staring the process in the foreground:_**
+
 ```bash
 python3 start.py
+```
+
+**_Staring the process in the background:_**
+
+```bash
+python3 start.py --in-background
+```
+
+**_To stop the process:_**
+
+```bash
+python3 stop.py
 ```
 
 **Windows:**
