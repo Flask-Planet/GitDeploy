@@ -17,18 +17,33 @@ if not Env.SCONF.exists():
         ))
 
 
+def write_gunicorn_pid(pid):
+    with open(Env.GPID, 'w') as pid_file:
+        pid_file.write(str(pid))
+
+
 def launch_supervisord() -> subprocess.Popen:
     process = subprocess.Popen(
         [Path(Env.PYBIN / 'supervisord'), '-c', f'{Path(Env.CWD / "supervisord.conf")}'], cwd=Env.CWD)
     return process
 
 
-def launch_gunicorn() -> subprocess.CompletedProcess:
+def launch_gunicorn(background_task: bool = False):
     gunicorn_config = Path.cwd() / 'gunicorn.conf.py'
     assert gunicorn_config.exists()
+    if not background_task:
+        process = subprocess.Popen([Path(Env.PYBIN / 'gunicorn')], cwd=Env.CWD, stdout=sys.stdout, stderr=sys.stderr)
+        write_gunicorn_pid(process.pid)
+        process.communicate()
 
-    process = subprocess.run([Path(Env.PYBIN / 'gunicorn')], cwd=Env.CWD, stdout=sys.stdout, stderr=sys.stderr)
-    return process
+    process = subprocess.Popen(
+        [Path(Env.PYBIN / 'gunicorn')],
+        cwd=Env.CWD,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+    write_gunicorn_pid(process.pid)
+    logging.info("Gunicorn started, running in background...")
 
 
 class Launcher:
@@ -39,7 +54,7 @@ class Launcher:
         self.supervisord_location = Env.PYBIN / 'supervisord'
         self.gunicorn_location = Env.PYBIN / 'gunicorn'
 
-    def start(self):
+    def start(self, background_task: bool = False):
         assert self.supervisord_location.exists()
         assert self.gunicorn_location.exists()
 
@@ -54,7 +69,26 @@ class Launcher:
 
         logging.info("supervisord started, launching gunicorn...")
 
-        launch_gunicorn()
+        launch_gunicorn(background_task=background_task)
+
+    @staticmethod
+    def stop():
+        if not Env.SPID.exists():
+            logging.info("No supervisord process found, skipping...")
+        else:
+            logging.info("Stopping supervisord...")
+            with open(Env.SPID) as supervisor_pid_file:
+                pid = supervisor_pid_file.read()
+                subprocess.run(f"kill -15 {pid}", shell=True)
+
+        if not Env.GPID.exists():
+            logging.info("No gunicorn process found, skipping...")
+        else:
+            logging.info("Stopping gunicorn...")
+            with open(Env.GPID) as gunicorn_pid_file:
+                pid = gunicorn_pid_file.read()
+                subprocess.run(f"kill -15 {pid}", shell=True)
+            Env.GPID.unlink()
 
     def __enter__(self):
         return self.start

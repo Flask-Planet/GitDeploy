@@ -140,3 +140,4 @@ dmypy.json
 /supervisor/
 /conf/
 /conf/
+/gunicorn.pid

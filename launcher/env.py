@@ -10,6 +10,8 @@ class Env:
     SCONF = CWD / 'supervisord.conf'
     SSOCK = CWD / 'supervisor.sock'
     SLOG = CWD / 'supervisor.log'
+    SPID = CWD / 'supervisord.pid'
+    GPID = CWD / 'gunicorn.pid'
     SYSLOG = LOGDIR / 'gitdeploy.log'
 
     PYBIN = Path(sys.executable).parent
