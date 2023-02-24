@@ -37,6 +37,7 @@ class Resources:
             "GIT_TOKEN_NAME": _wash_none_env(os.getenv("GD_GIT_TOKEN_NAME")),
             "GIT_TOKEN": _wash_none_env(os.getenv("GD_GIT_TOKEN")),
             "COMMAND": _wash_none_env(os.getenv("GD_COMMAND", '')),
+            "APP_AUTO_START": _wash_bool_env(os.environ.get("GD_APP_AUTO_START", False)),
             "APP_STATE": False,
             "WH_ENABLED": _wash_bool_env(os.environ.get("GD_WEBHOOK_ENABLED")),
             "WH_SECRET": os.getenv("GD_WEBHOOK_SECRET", Tools.generate_random_token(64)),

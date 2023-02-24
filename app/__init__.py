@@ -20,6 +20,9 @@ def create_app():
     bigapp.import_blueprint("api")
     bigapp.import_theme("theme")
 
+    if gitdeploy.conf.get("APP_AUTO_START"):
+        gitdeploy.start_satellite()
+
     return app
 
 
